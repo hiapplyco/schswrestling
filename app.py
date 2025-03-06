@@ -148,7 +148,6 @@ if 'show_audio_options' not in st.session_state:
     st.session_state.show_audio_options = False
 
 # Main UI Header
-st.markdown('<div class="section-header">Wrestling Technique Analyzer</div>', unsafe_allow_html=True)
 st.write("Upload a video of your wrestling technique for analysis.")
 
 # Video upload button
