@@ -347,7 +347,7 @@ Start with an immediate, direct assessment of the wrestler's skill level and ove
 *   Provide ONE key mindset cue or piece of wrestling IQ advice that embodies the Sage Creek wrestling approach. This should be direct and focused on improvement.
 *   This should be concise, memorable, and impactful. *Example: "Mindset: 'Dominate Every Position.'  Wrestling isn't about just scoring - it's about control. Ride tougher, shoot faster, scramble harder. Dominate."*
 
-Deliver your analysis with technical expertise, and a motivational tone. Use precise wrestling terminology. Be honest but always with the goal of improvement. Keep it concise, actionable, and under 350 words.
+Deliver your analysis with technical expertise, and a motivational tone. Use precise wrestling terminology. Be honest but always with the goal of improvement. Keep it concise, actionable, and under 1500 words.
 """
                     progress_bar.progress(80, text="Generating Insights...")
                     response = multimodal_Agent.run(analysis_prompt, videos=[processed_video])
@@ -461,13 +461,8 @@ else:
     Wrestling tryouts will start the week on November 12, 2024. Tryouts/practice times TBD. 
     All workouts will take place in the Sage Creek wrestling room.
     """)
-    
-    st.markdown('<div class="section-header">WRESTLING SCHEDULE COMING SOON</div>', unsafe_allow_html=True)
-    
+        
     st.write("**Head Coach:** David Steele, david.martin.steele@gmail.com")
-    
-    st.write("All interested athletes must complete the athletic clearance process to attend tryouts.")
-    st.write("Not sure if you are cleared? Check your status at www.athleticclearance.com")
     
     st.markdown("---")
     
