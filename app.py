@@ -44,7 +44,7 @@ st.markdown("""
         max-width: 1200px;
         margin: 0 auto;
     }
-    
+
     /* Sage Creek Colors */
     :root {
         --sc-dark-green: #2B4736;
@@ -53,7 +53,7 @@ st.markdown("""
         --sc-light-gray: #f5f5f5;
         --sc-dark-gray: #333333;
     }
-    
+
     /* Header Styling */
     .main-header {
         background-color: var(--sc-dark-green);
@@ -64,11 +64,11 @@ st.markdown("""
         display: flex;
         align-items: center;
     }
-    
+
     .main-header img {
         margin-right: 15px;
     }
-    
+
     /* Analysis Section */
     .analysis-section {
         padding: 20px;
@@ -77,20 +77,20 @@ st.markdown("""
         margin-top: 20px;
         background-color: var(--sc-light-gray);
     }
-    
+
     /* Button Styling */
     .stButton button {
         background-color: var(--sc-dark-green);
         color: white;
         font-weight: bold;
     }
-    
+
     .stDownloadButton button {
         background-color: var(--sc-gold);
         color: white;
         font-weight: bold;
     }
-    
+
     /* Info Boxes */
     .info-box {
         background-color: var(--sc-light-gray);
@@ -99,7 +99,7 @@ st.markdown("""
         margin: 10px 0;
         border-radius: 5px;
     }
-    
+
     /* Navigation Menu Styling */
     .nav-menu {
         background-color: var(--sc-dark-green);
@@ -110,13 +110,13 @@ st.markdown("""
         display: flex;
         justify-content: space-around;
     }
-    
+
     .nav-menu a {
         color: white;
         text-decoration: none;
         padding: 5px 10px;
     }
-    
+
     /* Footer Styling */
     .footer {
         background-color: var(--sc-dark-green);
@@ -126,14 +126,14 @@ st.markdown("""
         border-radius: 5px;
         margin-top: 30px;
     }
-    
+
     /* Centralize elements for cleaner look on larger screens */
     .stFileUploader, .stTextArea, .stButton, .stDownloadButton, .stAudio, .stVideo {
         max-width: 800px;
         margin-left: auto;
         margin-right: auto;
     }
-    
+
     /* Section Headers */
     .section-header {
         background-color: var(--sc-light-green);
@@ -142,7 +142,7 @@ st.markdown("""
         border-radius: 5px;
         margin: 15px 0;
     }
-    
+
     /* Sport Boxes */
     .sport-box {
         display: inline-block;
@@ -153,11 +153,11 @@ st.markdown("""
         border-radius: 5px;
         font-weight: bold;
     }
-    
+
     .sport-box.active {
         background-color: var(--sc-gold);
     }
-    
+
     h1, h2, h3, h4 {
         color: var(--sc-dark-green);
     }
@@ -191,18 +191,18 @@ with st.sidebar:
 
     st.subheader("Wrestling Program Info", anchor=False)
     st.write("""
-    
+
     **Head Coach:** David Steele, david.martin.steele@gmail.com
-    
+
     """)
 
     st.subheader("Connect with Sage Creek Wrestling", anchor=False)
     st.write("""
-    **Address:**  
-    3900 Bobcat Blvd.  
+    **Address:**
+    3900 Bobcat Blvd.
     Carlsbad, CA 92010
-    
-    **Phone:** 760-331-6600  
+
+    **Phone:** 760-331-6600
     **Email:** office.schs@carlsbadusd.net
     """)
 
@@ -282,37 +282,33 @@ if video_file:
 
                     progress_bar.progress(60, text="Analyzing Technique...")
 
-                    analysis_prompt = f"""You are a wrestling coach, David Steele, analyzing this video to provide feedback for a high school wrestler at Sage Creek High School. Analyze this wrestling video focusing on: {user_query}
+                    analysis_prompt = f"""You are Cary Kolat, legendary wrestler and coach. You are meticulously analyzing a high school wrestler from Sage Creek's video to provide feedback in your signature, detail-oriented style. Analyze this wrestling video focusing on: {user_query}
 
-Structure your analysis to deliver actionable insights, emphasizing core techniques and improvement. Focus on fundamentals across neutral, top, bottom, and scramble positions.
+Structure your analysis to deliver actionable insights, emphasizing core techniques and relentless improvement, in line with the Kolat Wrestling Philosophy.
 
-Structure your feedback rigorously:
+Structure your feedback rigorously, mirroring Cary Kolat's direct and demanding coaching approach:
 
-## TECHNIQUE DIAGNOSIS & INITIAL IMPRESSION
-Start with an immediate, direct assessment of the wrestler's skill level and overall technique in the video. Be precise and constructive. *Example: "Needs Improvement: Shows some understanding of the single leg, but lacks crucial details in penetration and finish. Stance is too high, needs more motion."*
+## TECHNIQUE DIAGNOSIS: INITIAL IMPRESSION - NO BS.
+Cut the fluff. Start with a brutally honest, immediate assessment of the wrestler's skill level.  Are they fundamentally sound or a project? Be direct. *Example: "Raw. Needs Major Work: Single leg attempt is weak. Stance is too high, no penetration, hands are lazy. Back to basics."*
 
-## KEY STRENGTHS (Identify 1-2 Foundational Elements - Be Selective)
-*   Pinpoint 1-2 elements where the wrestler shows solid fundamentals or potential. Include timestamps for focused review.
-*   Briefly explain *why* these are strengths based on wrestling biomechanics and core principles. *Example: "Good hand fighting - timestamp [0:15]. Wrestler uses active hands to clear ties and create space, fundamental for setting up shots."*
+## KEY FUNDAMENTAL FLAWS (Identify 2-3 CRITICAL ISSUES - PRIORITIZE)
+*   Pinpoint the 2-3 ABSOLUTE MUST-FIX flaws killing their technique. Timestamp each for immediate video reference. No fluff - what will cost them matches?
+*   Explain the *precise* technical breakdown.  Use Kolat's language.  Focus on stance, motion, penetration, finish. *Example: "Lazy Hands - [0:10]. Hands are down, not active.  You're telegraphing your shot. Active hands control ties, create openings. Fundamental flaw."*
+*   Detail the *match-costing consequences*.  How will this get them beat? *Example: "Lazy hands means you get collar tied, headlocked, and can't control your opponent.  You'll get beat by anyone with hand-fighting skills."*
 
-## CRITICAL CORRECTIONS (Prioritize 2-3 - High-Impact, Actionable)
-*   Zero in on the 2-3 MOST critical technical flaws hindering their immediate progress. Provide timestamps for precise correction.
-*   Explain the *exact* biomechanical principle being violated. *Example: "High Stance - timestamp [0:25]. Stance is too upright. Needs to lower center of gravity to improve shot penetration and defense."*
-*   Detail the *direct consequences* of these errors in wrestling matches. *Example: "High stance makes you vulnerable to leg attacks and slower to react defensively. You'll get shot on by anyone with a good low single."*
+## KOLAT DRILL PRESCRIPTION: FIX IT NOW (Assign 2-3 Game-Changing Drills)
+*   Prescribe 2-3 MAX, high-rep Kolat drills to directly attack these flaws. Drills must be from the Kolat system – stance drills, penetration drills, finish drills. Be specific – reps, sets, intensity.
+*   Explain the *EXACT PURPOSE* of each drill in Kolat's terms.  How does it build the needed muscle memory and fix the breakdown? *Example: "Drill: 1000 Hand Fighting Drills This Week. Purpose: Build active hand muscle memory.  Every day, before and after practice.  No excuses."*
 
-## DRILL PRESCRIPTION (Assign 1-2 Focused Drills - High Repetition)
-*   Prescribe 1-2 specific, high-repetition drills to fix the identified weaknesses. Drills should be practical and immediately implementable in training.
-*   Explain the *purpose* of each drill and *how* it corrects the flaw. *Example: "Drill: 500 Penetration Steps Daily. Purpose: Builds muscle memory for low stance and explosive penetration. Do this until it's automatic - every day."*
+## WRESTLING IQ & MINDSET - THE KOLAT NON-NEGOTIABLE
+*   Deliver ONE non-negotiable mindset cue.  This is about toughness, work ethic, and the Kolat mentality of DOMINANCE.  No soft encouragement - demand better.
+*   Make it a Kolat-style command.  Direct, aggressive, and unforgettable.  *Example: "Mindset: 'Relentless Forward Pressure. Wrestle like you're attacking their will.  Dominate or get dominated.  Choose dominance.'"*
 
-## MINDSET & WRESTLING IQ CUE (The Sage Creek Bobcat Mindset)
-*   Provide ONE key mindset cue or piece of wrestling IQ advice that embodies the Sage Creek wrestling approach. This should be direct and focused on improvement.
-*   This should be concise, memorable, and impactful. *Example: "Mindset: 'Dominate Every Position.'  Wrestling isn't about just scoring - it's about control. Ride tougher, shoot faster, scramble harder. Dominate."*
-
-Deliver your analysis with technical expertise, and a motivational tone. Use precise wrestling terminology. Be honest but always with the goal of improvement. Keep it concise, actionable, and under 1500 words.
+Deliver this analysis with the uncompromising, technical authority of Cary Kolat.  Be brutally honest. Be direct. Be demanding.  But be effective.  Wrestlers need TRUTH to improve.  Keep it concise – under 300 words.  No wasted words.  Let's get to work.
 """
-                    progress_bar.progress(80, text="Generating Insights...")
+                    progress_bar.progress(80, text="Generating Kolat-Style Insights...")
                     response = multimodal_Agent.run(analysis_prompt, videos=[processed_video])
-                    progress_bar.progress(100, text="Analysis Complete!")
+                    progress_bar.progress(100, text="Analysis Complete. Get Back to Work!")
                     time.sleep(0.5)
                     progress_bar.empty()
 
@@ -370,17 +366,17 @@ Deliver your analysis with technical expertise, and a motivational tone. Use pre
                 if st.button("Generate Audio Analysis"):
                     if elevenlabs_api_key:
                         try:
-                            with st.spinner("Preparing audio script..."):
+                            with st.spinner("Preparing audio script - Kolat Style..."):
                                 script_prompt = f"""
-                                Convert the following wrestling technique analysis into a monologue script as if spoken by a coach.
-                                The tone should be direct, technically precise, and focused on actionable improvement.
+                                Convert the following wrestling technique analysis into a monologue script as if spoken by Cary Kolat.
+                                The tone MUST be direct, demanding, technically precise, and laser-focused on actionable improvement, just like Cary Kolat's signature coaching.
 
-                                Remove all headings, bullet points, timestamps or any special characters.
-                                The script should be plain text and sound like a coach talking directly to a wrestler, providing feedback.
+                                Remove ALL headings, bullet points, timestamps, or ANY fluff.
+                                The script MUST be plain text and sound EXACTLY like a coach talking DIRECTLY to a wrestler, providing no-nonsense, tough feedback.
 
-                                Emphasize the critical corrections and drills needed for improvement.
-                                The script should be highly focused on technique, mindset, and work ethic.
-                                Inject a sense of urgency and demand for immediate action.
+                                EMPHASIZE the critical corrections and DRILLS needed for IMMEDIATE improvement.
+                                The script MUST be hyper-focused on core technique, iron-clad mindset, and relentless work ethic – the non-negotiable pillars of the Kolat philosophy.
+                                Inject a sense of EXTREME URGENCY and DEMAND for INSTANT ACTION.  No soft encouragement.  Demand DOMINANCE.
 
                                 **Analysis to convert:**
                                 ```
@@ -390,7 +386,7 @@ Deliver your analysis with technical expertise, and a motivational tone. Use pre
                                 script_response = script_agent.run(script_prompt)
                                 st.session_state.audio_script = script_response.content
 
-                            with st.spinner("Generating audio..."):
+                            with st.spinner("Generating audio - Kolat Voice..."):
                                 clean_text = st.session_state.audio_script
                                 client = ElevenLabs(api_key=elevenlabs_api_key)
                                 audio_generator = client.text_to_speech.convert(
@@ -417,12 +413,12 @@ Deliver your analysis with technical expertise, and a motivational tone. Use pre
                         st.error("ElevenLabs API key needed for audio.")
 
 else:
-    
+
     st.write("""
-    Upload a wrestling video to receive technique analysis and feedback.
+    Upload a wrestling video to receive Cary Kolat-style technique analysis. Let's get to work!
     """)
-    st.info("🤼 Upload a wrestling technique video above for expert AI analysis and personalized feedback.")
-    
+    st.info("🤼 Upload a wrestling technique video above for expert AI analysis and personalized feedback, the Kolat way.")
+
     st.markdown('<div class="section-header">Tips for Best Analysis</div>', unsafe_allow_html=True)
     with st.expander("How to Get the Most from Your Wrestling Analysis"):
         st.markdown("""
