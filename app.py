@@ -418,11 +418,6 @@ Deliver your analysis with technical expertise, and a motivational tone. Use pre
                         st.error("ElevenLabs API key needed for audio.")
 
 else:
-    st.markdown('<div class="section-header">24-25 SEASON UPDATE:</div>', unsafe_allow_html=True)
-    st.write("""
-    Wrestling tryouts will start the week on November 12, 2024. Tryouts/practice times TBD. 
-    All workouts will take place in the Sage Creek wrestling room.
-    """)
         
     st.write("**Head Coach:** David Steele, david.martin.steele@gmail.com")
     
