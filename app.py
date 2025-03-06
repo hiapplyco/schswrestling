@@ -178,40 +178,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ------------------------------
-# Navigation Menu
-# ------------------------------
-st.markdown("""
-    <div class="nav-menu">
-        <a href="#">HOME</a>
-        <a href="#">ABOUT</a>
-        <a href="#">DEPARTMENTS</a>
-        <a href="#">STUDENTS</a>
-        <a href="#">PARENTS</a>
-        <a href="#">STAFF DIRECTORY</a>
-    </div>
-    
-    <div style="font-size: 14px; margin-bottom: 20px;">
-        <span>DEPARTMENTS</span> &gt; <span>Athletics</span> &gt; <span>Winter Sports</span> &gt; <span>Wrestling</span>
-    </div>
-""", unsafe_allow_html=True)
-
-st.markdown("<h2>Wrestling</h2>", unsafe_allow_html=True)
-
-# ------------------------------
-# Sport Navigation Boxes
-# ------------------------------
-st.markdown("""
-    <div style="margin: 20px 0; background-color: #f5f5f5; padding: 15px; border-radius: 5px;">
-        <span class="sport-box">Boys Soccer</span>
-        <span class="sport-box">Boys Basketball</span>
-        <span class="sport-box">Girls Basketball</span>
-        <span class="sport-box">Girls Soccer</span>
-        <span class="sport-box active">Wrestling</span>
-        <span class="sport-box">Girls Water Polo</span>
-    </div>
-""", unsafe_allow_html=True)
-
-# ------------------------------
 # Sidebar content - Sage Creek themed
 # ------------------------------
 with st.sidebar:
