@@ -244,7 +244,7 @@ st.markdown('<div class="section-header">Wrestling Technique Analyzer</div>', un
 st.write("Upload a video of your wrestling technique for analysis.")
 
 video_file = st.file_uploader(
-    "Upload Wrestling Technique Video",
+    "Upload Video",
     type=['mp4', 'mov', 'avi'],
     help="Upload a video of your wrestling technique to receive detailed feedback."
 )
@@ -283,7 +283,7 @@ if video_file:
 
                     progress_bar.progress(60, text="Analyzing Technique...")
 
-                    analysis_prompt = f"""You are a wrestling coach analyzing this video to provide feedback for a high school wrestler at Sage Creek High School. Analyze this wrestling video focusing on: {user_query}
+                    analysis_prompt = f"""You are a wrestling coach, David Steele, analyzing this video to provide feedback for a high school wrestler at Sage Creek High School. Analyze this wrestling video focusing on: {user_query}
 
 Structure your analysis to deliver actionable insights, emphasizing core techniques and improvement. Focus on fundamentals across neutral, top, bottom, and scramble positions.
 
@@ -418,10 +418,6 @@ Deliver your analysis with technical expertise, and a motivational tone. Use pre
                         st.error("ElevenLabs API key needed for audio.")
 
 else:
-        
-    st.write("**Head Coach:** David Steele, david.martin.steele@gmail.com")
-    
-    st.markdown("---")
     
     st.write("""
     Upload a wrestling video to receive technique analysis and feedback.
