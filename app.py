@@ -354,7 +354,3 @@ else:
         """) # Example testimonial - needs to be updated - Sage Creek Specific if possible
 
     st.write("**Technique Wins. Dominate the Details. Let's Go!**") # Motivational quote - Wrestling/Kolat themed
-content_copy
-download
-Use code with caution.
-Python
