@@ -191,13 +191,9 @@ with st.sidebar:
 
     st.subheader("Wrestling Program Info", anchor=False)
     st.write("""
-    **24-25 SEASON UPDATE:**  
-    Wrestling tryouts will start the week on November 12, 2024. Tryouts/practice times TBD. All workouts will take place in the Sage Creek wrestling room.
     
     **Head Coach:** David Steele, david.martin.steele@gmail.com
     
-    All interested athletes must complete the athletic clearance process to attend tryouts.
-    Not sure if you are cleared? Check your status at www.athleticclearance.com
     """)
 
     st.subheader("Connect with Sage Creek Wrestling", anchor=False)
