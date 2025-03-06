@@ -14,15 +14,10 @@ import base64
 
 # Set page configuration
 st.set_page_config(
-    page_title="Sage Creek Wrestling Analyzer - Powered by Kolat Method",
+    page_title="Sage Creek Wrestling Analyzer",
     page_icon="🤼",
     layout="wide"
 )
-
-# ------------------------------
-# Utility Functions for Background (REMOVED)
-# ------------------------------
-# Background and custom CSS are being significantly simplified for clarity.
 
 # ------------------------------
 # Retrieve API keys from secrets
@@ -41,7 +36,7 @@ else:
     st.stop()
 
 # ------------------------------
-# Basic CSS styling - now much simpler
+# CSS styling based on Sage Creek website
 # ------------------------------
 st.markdown("""
     <style>
@@ -49,55 +44,204 @@ st.markdown("""
         max-width: 1200px;
         margin: 0 auto;
     }
+    
+    /* Sage Creek Colors */
+    :root {
+        --sc-dark-green: #2B4736;
+        --sc-light-green: #3D6A4D;
+        --sc-gold: #BF9D4E;
+        --sc-light-gray: #f5f5f5;
+        --sc-dark-gray: #333333;
+    }
+    
+    /* Header Styling */
+    .main-header {
+        background-color: var(--sc-dark-green);
+        padding: 15px;
+        color: white;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .main-header img {
+        margin-right: 15px;
+    }
+    
+    /* Analysis Section */
     .analysis-section {
         padding: 20px;
-        border-radius: 10px;
-        border-left: 5px solid #0474b5; /* Sage Creek Blue accent - Example */
+        border-radius: 5px;
+        border-left: 5px solid var(--sc-gold);
         margin-top: 20px;
-        background-color: #f9f9f9; /* Light background for analysis */
+        background-color: var(--sc-light-gray);
     }
+    
+    /* Button Styling */
     .stButton button {
-        background-color: #0474b5; /* Sage Creek Blue button - Example */
+        background-color: var(--sc-dark-green);
         color: white;
+        font-weight: bold;
     }
+    
     .stDownloadButton button {
-        background-color: #4CAF50; /* Example: Green for download */
+        background-color: var(--sc-gold);
         color: white;
+        font-weight: bold;
     }
-
+    
+    /* Info Boxes */
+    .info-box {
+        background-color: var(--sc-light-gray);
+        border-left: 5px solid var(--sc-gold);
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+    }
+    
+    /* Navigation Menu Styling */
+    .nav-menu {
+        background-color: var(--sc-dark-green);
+        color: white;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-around;
+    }
+    
+    .nav-menu a {
+        color: white;
+        text-decoration: none;
+        padding: 5px 10px;
+    }
+    
+    /* Footer Styling */
+    .footer {
+        background-color: var(--sc-dark-green);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        border-radius: 5px;
+        margin-top: 30px;
+    }
+    
     /* Centralize elements for cleaner look on larger screens */
     .stFileUploader, .stTextArea, .stButton, .stDownloadButton, .stAudio, .stVideo {
-        max-width: 800px; /* Adjust as needed */
+        max-width: 800px;
         margin-left: auto;
         margin-right: auto;
+    }
+    
+    /* Section Headers */
+    .section-header {
+        background-color: var(--sc-light-green);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+    }
+    
+    /* Sport Boxes */
+    .sport-box {
+        display: inline-block;
+        background-color: var(--sc-dark-green);
+        color: white;
+        padding: 8px 15px;
+        margin: 5px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    
+    .sport-box.active {
+        background-color: var(--sc-gold);
+    }
+    
+    h1, h2, h3, h4 {
+        color: var(--sc-dark-green);
     }
     </style>
 """, unsafe_allow_html=True)
 
 # ------------------------------
-# Header - Simplified - Wrestling Focused
+# Header - Styled like Sage Creek website
 # ------------------------------
-st.image("https://sagecreekhs.net/wp-content/uploads/2023/07/cropped-SageCreek_favicon-32x32.png", width=100) # Sage Creek Logo - Replace with actual wrestling logo if available
-st.title("Sage Creek High School Wrestling Analyzer")
-st.markdown("Get Cary Kolat-style feedback on your wrestling technique.") # Clear subtitle as CTA
+st.markdown("""
+    <div class="main-header">
+        <img src="https://schs.carlsbadusd.net/assets/img/site-logo.png" width="70">
+        <div>
+            <h1 style="margin: 0;">Sage Creek High School</h1>
+            <h3 style="margin: 0; font-weight: normal;">Wrestling Analyzer</h3>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
 
 # ------------------------------
-# Sidebar content - Kept, but now Wrestling themed
+# Navigation Menu
+# ------------------------------
+st.markdown("""
+    <div class="nav-menu">
+        <a href="#">HOME</a>
+        <a href="#">ABOUT</a>
+        <a href="#">DEPARTMENTS</a>
+        <a href="#">STUDENTS</a>
+        <a href="#">PARENTS</a>
+        <a href="#">STAFF DIRECTORY</a>
+    </div>
+    
+    <div style="font-size: 14px; margin-bottom: 20px;">
+        <span>DEPARTMENTS</span> &gt; <span>Athletics</span> &gt; <span>Winter Sports</span> &gt; <span>Wrestling</span>
+    </div>
+""", unsafe_allow_html=True)
+
+st.markdown("<h2>Wrestling</h2>", unsafe_allow_html=True)
+
+# ------------------------------
+# Sport Navigation Boxes
+# ------------------------------
+st.markdown("""
+    <div style="margin: 20px 0; background-color: #f5f5f5; padding: 15px; border-radius: 5px;">
+        <span class="sport-box">Boys Soccer</span>
+        <span class="sport-box">Boys Basketball</span>
+        <span class="sport-box">Girls Basketball</span>
+        <span class="sport-box">Girls Soccer</span>
+        <span class="sport-box active">Wrestling</span>
+        <span class="sport-box">Girls Water Polo</span>
+    </div>
+""", unsafe_allow_html=True)
+
+# ------------------------------
+# Sidebar content - Sage Creek themed
 # ------------------------------
 with st.sidebar:
-    st.image("https://sagecreekhs.net/wp-content/uploads/2023/07/cropped-SageCreek_favicon-32x32.png", width=80) # Smaller sidebar logo - Replace with actual wrestling logo if available
-    st.header("About Wrestling Form Analysis", anchor=False) # anchor=False to remove streamlit warning
+    st.image("https://schs.carlsbadusd.net/assets/img/site-logo.png", width=80)
+    st.header("About Wrestling Form Analysis", anchor=False)
     st.write("""
-    Level up your wrestling with AI-powered technique analysis, inspired by Cary Kolat's legendary coaching. Upload a video and get detailed feedback to refine your takedowns, top control, escapes, and scrambles.
+    Level up your wrestling with AI-powered technique analysis. Upload a video and get detailed feedback to refine your takedowns, top control, escapes, and scrambles.
 
-    Dominate on the mat with precise technique and strategic insights! Go Coyotes!
+    Dominate on the mat with precise technique and strategic insights! Go Bobcats!
     """)
 
-    st.subheader("Connect with Sage Creek Wrestling", anchor=False) # Example Contact info - adapt as needed
+    st.subheader("Wrestling Program Info", anchor=False)
     st.write("""
-    **Visit the Sage Creek High School Athletics Website**: [Sage Creek Athletics](https://sagecreekhs.net/athletics/)  (Example Link)
+    **24-25 SEASON UPDATE:**  
+    Wrestling tryouts will start the week on November 12, 2024. Tryouts/practice times TBD. All workouts will take place in the Sage Creek wrestling room.
+    
+    **Head Coach:** David Steele, david.martin.steele@gmail.com
+    
+    All interested athletes must complete the athletic clearance process to attend tryouts.
+    Not sure if you are cleared? Check your status at www.athleticclearance.com
+    """)
 
-    **Find a Wrestling Club**: [USA Wrestling Club Finder](https://www.usawmembership.com/club_search) (Example Link)
+    st.subheader("Connect with Sage Creek Wrestling", anchor=False)
+    st.write("""
+    **Address:**  
+    3900 Bobcat Blvd.  
+    Carlsbad, CA 92010
+    
+    **Phone:** 760-331-6600  
+    **Email:** office.schs@carlsbadusd.net
     """)
 
 # ------------------------------
@@ -114,7 +258,7 @@ def initialize_agent():
     )
 
 multimodal_Agent = initialize_agent()
-script_agent = initialize_agent() # Initialize a second agent for script generation
+script_agent = initialize_agent()
 
 # ------------------------------
 # Session state initialization
@@ -122,7 +266,7 @@ script_agent = initialize_agent() # Initialize a second agent for script generat
 if 'analysis_result' not in st.session_state:
     st.session_state.analysis_result = None
 
-if 'audio_script' not in st.session_state: # New session state for audio script
+if 'audio_script' not in st.session_state:
     st.session_state.audio_script = None
 
 if 'audio_generated' not in st.session_state:
@@ -132,15 +276,15 @@ if 'show_audio_options' not in st.session_state:
     st.session_state.show_audio_options = False
 
 # ------------------------------
-# Main UI - Streamlined Landing and Video Analysis - Wrestling focused
+# Main UI - Section Headers in Sage Creek style
 # ------------------------------
-st.write(" ") # Adding some whitespace
-st.write("Upload a video of your wrestling technique for analysis.") # More direct instruction
+st.markdown('<div class="section-header">Wrestling Technique Analyzer</div>', unsafe_allow_html=True)
+st.write("Upload a video of your wrestling technique for analysis.")
 
 video_file = st.file_uploader(
-    "Upload Wrestling Technique Video", # Clearer label - Wrestling specific
+    "Upload Wrestling Technique Video",
     type=['mp4', 'mov', 'avi'],
-    help="Upload a video of your wrestling technique to receive Cary Kolat-style feedback." # Help text updated
+    help="Upload a video of your wrestling technique to receive detailed feedback."
 )
 
 if video_file:
@@ -151,18 +295,18 @@ if video_file:
     st.video(video_path, format="video/mp4", start_time=0)
 
     user_query = st.text_area(
-        "What wrestling technique would you like analyzed?", # More user-focused question - Wrestling specific
-        placeholder="e.g., 'Analyze my single leg takedown', 'How's my top control?', 'Check my stand-up escape'", # Placeholders updated
-        height=80 # Reduced height for text area
+        "What wrestling technique would you like analyzed?",
+        placeholder="e.g., 'Analyze my single leg takedown', 'How's my top control?', 'Check my stand-up escape'",
+        height=80
     )
-    analyze_button = st.button("Get Kolat-Style Analysis") # Stronger CTA button text - Wrestling specific
+    analyze_button = st.button("Get Analysis")
 
     if analyze_button:
         if not user_query:
-            st.warning("Please enter a wrestling technique you want analyzed.") # Warning updated
+            st.warning("Please enter a wrestling technique you want analyzed.")
         else:
             try:
-                with st.spinner("Analyzing video and generating Cary Kolat-style feedback..."): # Spinner text updated
+                with st.spinner("Analyzing video and generating feedback..."):
                     progress_bar = st.progress(0)
                     progress_bar.progress(10, text="Uploading...")
                     processed_video = upload_file(video_path)
@@ -171,77 +315,77 @@ if video_file:
                     processing_start = time.time()
                     while processed_video.state.name == "PROCESSING":
                         if time.time() - processing_start > 60:
-                            st.warning("Video processing is taking longer than expected. Please be patient, champion.") # Cary Kolat style patience encouragement
+                            st.warning("Video processing is taking longer than expected. Please be patient.")
                         time.sleep(1)
                         processed_video = get_file(processed_video.name)
 
-                    progress_bar.progress(60, text="Analyzing Technique...") # Progress text updated
+                    progress_bar.progress(60, text="Analyzing Technique...")
 
-                    analysis_prompt = f"""You are Cary Kolat, legendary wrestler and coach. You are meticulously analyzing a high school wrestler's video to provide feedback in your signature, detail-oriented style.  Analyze this wrestling video focusing on: {user_query}
+                    analysis_prompt = f"""You are a wrestling coach analyzing this video to provide feedback for a high school wrestler at Sage Creek High School. Analyze this wrestling video focusing on: {user_query}
 
-Structure your analysis to deliver actionable insights, emphasizing core techniques and relentless improvement. Focus on fundamentals across neutral, top, bottom, and scramble positions, reflecting Kolat's coaching pillars.
+Structure your analysis to deliver actionable insights, emphasizing core techniques and improvement. Focus on fundamentals across neutral, top, bottom, and scramble positions.
 
-Structure your feedback rigorously, mirroring Cary Kolat's coaching approach:
+Structure your feedback rigorously:
 
 ## TECHNIQUE DIAGNOSIS & INITIAL IMPRESSION
-Start with an immediate, direct assessment of the wrestler's skill level and overall technique in the video. Be as precise as if you were cornering them at a major tournament. *Example: "Needs Improvement: Shows some understanding of the single leg, but lacks crucial details in penetration and finish. Stance is too high, needs more motion."*
+Start with an immediate, direct assessment of the wrestler's skill level and overall technique in the video. Be precise and constructive. *Example: "Needs Improvement: Shows some understanding of the single leg, but lacks crucial details in penetration and finish. Stance is too high, needs more motion."*
 
 ## KEY STRENGTHS (Identify 1-2 Foundational Elements - Be Selective)
-*   Pinpoint 1-2 elements where the wrestler shows solid fundamentals or potential. Include timestamps for focused review.  Don't overpraise, keep it technical.
-*   Briefly explain *why* these are strengths based on wrestling biomechanics and Kolat's core principles. *Example: "Good hand fighting - timestamp [0:15]. Wrestler uses active hands to clear ties and create space, fundamental for setting up shots."*
+*   Pinpoint 1-2 elements where the wrestler shows solid fundamentals or potential. Include timestamps for focused review.
+*   Briefly explain *why* these are strengths based on wrestling biomechanics and core principles. *Example: "Good hand fighting - timestamp [0:15]. Wrestler uses active hands to clear ties and create space, fundamental for setting up shots."*
 
 ## CRITICAL CORRECTIONS (Prioritize 2-3 - High-Impact, Actionable)
 *   Zero in on the 2-3 MOST critical technical flaws hindering their immediate progress. Provide timestamps for precise correction.
-*   Explain the *exact* biomechanical principle being violated in Kolat's terms. *Example: "High Stance - timestamp [0:25]. Stance is too upright. Needs to lower center of gravity to improve shot penetration and defense. 'Low stance, fast hands, always moving' - that's wrestling."*
+*   Explain the *exact* biomechanical principle being violated. *Example: "High Stance - timestamp [0:25]. Stance is too upright. Needs to lower center of gravity to improve shot penetration and defense."*
 *   Detail the *direct consequences* of these errors in wrestling matches. *Example: "High stance makes you vulnerable to leg attacks and slower to react defensively. You'll get shot on by anyone with a good low single."*
 
-## KOLAT DRILL PRESCRIPTION (Assign 1-2 Focused Drills - High Repetition)
-*   Prescribe 1-2 specific, high-repetition drills directly from the Kolat system to fix the identified weaknesses. Drills should be practical and immediately implementable in training.
+## DRILL PRESCRIPTION (Assign 1-2 Focused Drills - High Repetition)
+*   Prescribe 1-2 specific, high-repetition drills to fix the identified weaknesses. Drills should be practical and immediately implementable in training.
 *   Explain the *purpose* of each drill and *how* it corrects the flaw. *Example: "Drill: 500 Penetration Steps Daily. Purpose: Builds muscle memory for low stance and explosive penetration. Do this until it's automatic - every day."*
 
-## MINDSET & WRESTLING IQ CUE (The 'Kolat Mindset' Takeaway)
-*   Provide ONE key mindset cue or piece of wrestling IQ advice that embodies Kolat's mental approach. This should be direct, demanding, and focused on relentless improvement.
-*   This should be a 'Kolat-ism' – concise, memorable, and impactful. *Example: "Mindset: 'Dominate Every Position.'  Wrestling isn't about just scoring - it's about control. Ride tougher, shoot faster, scramble harder. Dominate."*
+## MINDSET & WRESTLING IQ CUE (The Sage Creek Bobcat Mindset)
+*   Provide ONE key mindset cue or piece of wrestling IQ advice that embodies the Sage Creek wrestling approach. This should be direct and focused on improvement.
+*   This should be concise, memorable, and impactful. *Example: "Mindset: 'Dominate Every Position.'  Wrestling isn't about just scoring - it's about control. Ride tougher, shoot faster, scramble harder. Dominate."*
 
-Deliver your analysis with the directness, technical expertise, and demanding yet motivational tone of Cary Kolat. Use precise wrestling terminology. Be brutally honest but always with the goal of improvement. Keep it concise, actionable, and under 350 words – Kolat is efficient and to the point.
+Deliver your analysis with technical expertise, and a motivational tone. Use precise wrestling terminology. Be honest but always with the goal of improvement. Keep it concise, actionable, and under 350 words.
 """
-                    progress_bar.progress(80, text="Generating Kolat-Style Insights...") # Progress text updated
+                    progress_bar.progress(80, text="Generating Insights...")
                     response = multimodal_Agent.run(analysis_prompt, videos=[processed_video])
-                    progress_bar.progress(100, text="Analysis Complete. Let's get to work!") # Progress text updated - Kolat style
+                    progress_bar.progress(100, text="Analysis Complete!")
                     time.sleep(0.5)
                     progress_bar.empty()
 
                     st.session_state.analysis_result = response.content
                     st.session_state.audio_generated = False
                     st.session_state.show_audio_options = False
-                    st.session_state.audio_script = None # Reset audio script when new analysis is generated
+                    st.session_state.audio_script = None
 
             except Exception as error:
-                st.error(f"Analysis error: {error}") # Error message kept general
-                st.info("Try uploading a shorter video or check your internet connection. Get back to work.") # Info message kept general - Kolat style
+                st.error(f"Analysis error: {error}")
+                st.info("Try uploading a shorter video or check your internet connection.")
             finally:
                 Path(video_path).unlink(missing_ok=True)
 
-    # Analysis Section - Displayed regardless of audio options
+    # Analysis Section
     if st.session_state.analysis_result:
         st.markdown('<div class="analysis-section">', unsafe_allow_html=True)
-        st.subheader("Cary Kolat Technique Analysis") # Subheader updated
+        st.subheader("Wrestling Technique Analysis")
         st.markdown(st.session_state.analysis_result)
         st.markdown('</div>', unsafe_allow_html=True)
 
         st.download_button(
-            label="Download Analysis", # Clearer label
+            label="Download Analysis",
             data=st.session_state.analysis_result,
-            file_name="wrestling_technique_analysis.md", # Filename updated
+            file_name="wrestling_technique_analysis.md",
             mime="text/markdown"
         )
 
-        # Audio Options Section - Now consistently below analysis
-        if st.button("Listen to Analysis (Audio Options)"): # More informative button
+        # Audio Options Section
+        if st.button("Listen to Analysis (Audio Options)"):
             st.session_state.show_audio_options = True
 
         if st.session_state.show_audio_options:
-            with st.expander("Audio Voice Settings", expanded=True): # Clearer expander title
+            with st.expander("Audio Voice Settings", expanded=True):
                 st.subheader("Voice Options")
 
                 elevenlabs_api_key = API_KEY_ELEVENLABS
@@ -257,100 +401,141 @@ Deliver your analysis with the directness, technical expertise, and demanding ye
                             st.warning("Voice selection issue. Using default voice.")
                             selected_voice_id = "21m00Tcm4TlvDq8ikWAM"
                     except Exception as e:
-                        st.warning(f"Could not retrieve voices: {e}. Using default voice.") # Include error in warning
+                        st.warning(f"Could not retrieve voices: {e}. Using default voice.")
                         selected_voice_id = "21m00Tcm4TlvDq8ikWAM"
                 else:
                     st.error("ElevenLabs API key missing.")
 
-                if st.button("Generate Audio Analysis"): # Clear CTA for audio generation
+                if st.button("Generate Audio Analysis"):
                     if elevenlabs_api_key:
                         try:
-                            with st.spinner("Preparing audio script - Kolat Style..."): # New spinner for script generation - Kolat style
+                            with st.spinner("Preparing audio script..."):
                                 script_prompt = f"""
-                                Convert the following wrestling technique analysis into a monologue script as if spoken by Cary Kolat.  The tone should be direct, demanding, technically precise, and focused on actionable improvement, just like Cary Kolat's coaching style.
+                                Convert the following wrestling technique analysis into a monologue script as if spoken by a coach.
+                                The tone should be direct, technically precise, and focused on actionable improvement.
 
-                                Remove all headings, bullet points, timestamps or any special characters.  The script should be plain text and sound like a coach talking directly to a wrestler, providing no-nonsense feedback.
+                                Remove all headings, bullet points, timestamps or any special characters.
+                                The script should be plain text and sound like a coach talking directly to a wrestler, providing feedback.
 
-                                Emphasize the critical corrections and drills needed for improvement. The script should be highly focused on technique, mindset, and relentless work ethic - key elements of the Kolat philosophy. Inject a sense of urgency and demand for immediate action.
+                                Emphasize the critical corrections and drills needed for improvement.
+                                The script should be highly focused on technique, mindset, and work ethic.
+                                Inject a sense of urgency and demand for immediate action.
 
                                 **Analysis to convert:**
                                 ```
                                 {st.session_state.analysis_result}
                                 ```
                                 """
-                                script_response = script_agent.run(script_prompt) # Use script_agent
-                                st.session_state.audio_script = script_response.content # Store the script
+                                script_response = script_agent.run(script_prompt)
+                                st.session_state.audio_script = script_response.content
 
-                            with st.spinner("Generating audio - Kolat Voice..."): # New spinner for audio generation - Kolat style
-                                clean_text = st.session_state.audio_script # Use audio_script for TTS
+                            with st.spinner("Generating audio..."):
+                                clean_text = st.session_state.audio_script
                                 client = ElevenLabs(api_key=elevenlabs_api_key)
-                                # **Modified Audio Generation Code:**
                                 audio_generator = client.text_to_speech.convert(
                                     text=clean_text,
                                     voice_id=selected_voice_id,
                                     model_id="eleven_multilingual_v2"
                                 )
-                                audio_bytes = b"" # Initialize empty bytes
+                                audio_bytes = b""
                                 for chunk in audio_generator:
-                                    audio_bytes += chunk # Accumulate audio chunks
-                                st.session_state.audio = audio_bytes # Store audio bytes in session state
+                                    audio_bytes += chunk
+                                st.session_state.audio = audio_bytes
                                 st.session_state.audio_generated = True
 
-                                st.audio(st.session_state.audio, format="audio/mp3") # Play audio from bytes
+                                st.audio(st.session_state.audio, format="audio/mp3")
                                 st.download_button(
-                                    label="Download Audio Analysis", # Clearer label
-                                    data=st.session_state.audio, # Download audio from bytes
-                                    file_name="wrestling_analysis_audio.mp3", # Filename updated
+                                    label="Download Audio Analysis",
+                                    data=st.session_state.audio,
+                                    file_name="wrestling_analysis_audio.mp3",
                                     mime="audio/mp3"
                                 )
                         except Exception as e:
-                            st.error(f"Audio generation error: {str(e)}") # Error message kept general
+                            st.error(f"Audio generation error: {str(e)}")
                     else:
                         st.error("ElevenLabs API key needed for audio.")
 
 else:
+    st.markdown('<div class="section-header">24-25 SEASON UPDATE:</div>', unsafe_allow_html=True)
     st.write("""
-    Upload a wrestling video to receive Cary Kolat-style technique analysis. Let's get to work!
-    """) # Welcome message updated - Kolat style
-    st.info("🤼 Upload a wrestling technique video above for expert AI analysis and personalized feedback, the Kolat way.") # Info message as CTA - Wrestling specific and Kolat style
-    st.subheader("Tips for Best Analysis - Focus Like Kolat") # Tips section - updated - Kolat style
-    with st.expander("How to Get the Most from Your Wrestling Analysis"): # Expander label updated - Kolat style
+    Wrestling tryouts will start the week on November 12, 2024. Tryouts/practice times TBD. 
+    All workouts will take place in the Sage Creek wrestling room.
+    """)
+    
+    st.markdown('<div class="section-header">WRESTLING SCHEDULE COMING SOON</div>', unsafe_allow_html=True)
+    
+    st.write("**Head Coach:** David Steele, david.martin.steele@gmail.com")
+    
+    st.write("All interested athletes must complete the athletic clearance process to attend tryouts.")
+    st.write("Not sure if you are cleared? Check your status at www.athleticclearance.com")
+    
+    st.markdown("---")
+    
+    st.write("""
+    Upload a wrestling video to receive technique analysis and feedback.
+    """)
+    st.info("🤼 Upload a wrestling technique video above for expert AI analysis and personalized feedback.")
+    
+    st.markdown('<div class="section-header">Tips for Best Analysis</div>', unsafe_allow_html=True)
+    with st.expander("How to Get the Most from Your Wrestling Analysis"):
         st.markdown("""
-        1. **Video Quality - Clear View**: Good lighting and a clear, stable view of the wrestler and technique. No excuses.
-        2. **Technique Focus - One Thing at a Time**: Focus on ONE technique per video for targeted, detailed feedback. Don't show me everything at once.
-        3. **Specific Question - Be Precise**: Ask a specific question about the technique.  'Analyze my single leg' is better than 'Critique my wrestling.' Be specific.
-        4. **Multiple Reps - Show the Movement**: Include several repetitions of the technique in the video so I can see the pattern. Show me you've drilled it.
+        1. **Video Quality**: Good lighting and a clear, stable view of the wrestler and technique.
+        2. **Technique Focus**: Focus on ONE technique per video for targeted, detailed feedback.
+        3. **Specific Question**: Ask a specific question about the technique. 'Analyze my single leg' is better than 'Critique my wrestling.'
+        4. **Multiple Reps**: Include several repetitions of the technique in the video so patterns can be identified.
         """)
 
-    st.subheader("Technique Areas for Analysis - Master the Fundamentals") # Section header - updated - Kolat style
+    st.markdown('<div class="section-header">Technique Areas for Analysis</div>', unsafe_allow_html=True)
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown("### Takedowns - Neutral Domination") # Sub-subheader for better visual hierarchy - updated - Kolat style
+        st.markdown("### Takedowns")
         st.write("""
-        Single Legs, Double Legs, High Crotches, Ankle Picks - Takedowns win matches. Let's analyze your penetration, setups, and finishes. Dominate neutral.
+        Single Legs, Double Legs, High Crotches, Ankle Picks - Takedowns win matches. Get analysis on your penetration, setups, and finishes.
         """)
     with col2:
-        st.markdown("### Top Control & Pinning - Ride Tough") # Sub-subheader for better visual hierarchy - updated - Kolat style
+        st.markdown("### Top Control & Pinning")
         st.write("""
-        Riding, Turns, Pins - Top position is for scoring and ending matches. Show me your rides, half nelsons, and pinning combinations.  Ride tougher.
+        Riding, Turns, Pins - Top position is for scoring and ending matches. Improve your rides, half nelsons, and pinning combinations.
         """)
     with col3:
-        st.markdown("### Bottom Escapes & Reversals - Get Off Bottom") # Sub-subheader for better visual hierarchy - updated - Kolat style
+        st.markdown("### Bottom Escapes & Reversals")
         st.write("""
-        Stand-Ups, Sit-Outs, Switches - Getting off bottom is non-negotiable.  Let's see your escapes and reversals. Don't give up points on bottom.
+        Stand-Ups, Sit-Outs, Switches - Getting off bottom is essential. Perfect your escapes and reversals to avoid giving up points.
         """)
 
-    st.markdown("---") # Divider for visual separation
+    st.markdown("---")
 
-    st.subheader("Sage Creek Wrestling - Built on Technique and Hard Work") # Testimonials section -  Sage Creek Specific if possible, otherwise general wrestling mindset
+    st.markdown('<div class="section-header">Sage Creek Wrestling</div>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
         st.info("""
-        "The Wrestling Analyzer helped me dial in my single leg finish - Coach Kolat's feedback was like having him matside!" - [Wrestler Name], Sage Creek High School Wrestling
-        """) # Example testimonial - needs to be updated - Sage Creek Specific if possible
+        "The Wrestling Analyzer helped me improve my technique significantly. The feedback was detailed and actionable!" - Sage Creek Wrestler
+        """)
     with col2:
         st.info("""
-        "I used to get stuck on bottom. The analysis pinpointed my base issues, and the drills are already making a difference. Thanks Coach Kolat AI!" - [Wrestler Name 2], Sage Creek Coyote Wrestler
-        """) # Example testimonial - needs to be updated - Sage Creek Specific if possible
+        "This tool has been invaluable for our team's development. The personalized feedback helps wrestlers identify areas for improvement." - Coach Steele
+        """)
 
-    st.write("**Technique Wins. Dominate the Details. Let's Go!**") # Motivational quote - Wrestling/Kolat themed
+# ------------------------------
+# Footer styled after Sage Creek website
+# ------------------------------
+st.markdown("""
+    <div class="footer">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <div>
+                <p style="font-weight: bold; margin-bottom: 5px;">Sage Creek High School</p>
+                <p style="margin: 0;">3900 Bobcat Blvd. | Carlsbad, CA 92010</p>
+                <p style="margin: 0;">Phone: 760-331-6600 • office.schs@carlsbadusd.net</p>
+            </div>
+            <div>
+                <p style="margin: 0;">Privacy Policy</p>
+                <p style="margin: 0;">Site Map</p>
+                <p style="margin: 0;">Accessibility</p>
+                <p style="margin: 0;">Login</p>
+            </div>
+        </div>
+        <hr style="border-color: #3D6A4D; margin: 10px 0;">
+        <p style="margin: 0; font-size: 12px;">Contents © 2025 Sage Creek High School</p>
+        <p style="margin: 0; font-size: 12px;">Notice of Non-Discrimination: In compliance with federal law, our school district administers all education programs, employment activities and admissions without discrimination against any person on the basis of gender, race, color, religion, national origin, age, or disability.</p>
+    </div>
+""", unsafe_allow_html=True)
