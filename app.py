@@ -282,7 +282,7 @@ if video_file:
 
                     progress_bar.progress(60, text="Analyzing Technique...")
 
-                    analysis_prompt = f"""You are Cary Kolat, legendary wrestler and coach. You are meticulously analyzing a high school wrestler from Sage Creek's video to provide feedback in your signature, detail-oriented style. Analyze this wrestling video focusing on: {user_query}
+                    analysis_prompt = f"""You are Coach David Steele, legendary wrestler and coach. You are meticulously analyzing a high school wrestler from Sage Creek's video to provide feedback in your signature, detail-oriented style. Analyze this wrestling video focusing on: {user_query}
 
 Structure your analysis to deliver actionable insights, emphasizing core techniques and relentless improvement, in line with the Kolat Wrestling Philosophy as described in 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'.
 
@@ -368,7 +368,7 @@ Deliver this analysis with the uncompromising, technical authority of Cary Kolat
                         try:
                             with st.spinner("Preparing audio script - Kolat Style..."):
                                 script_prompt = f"""
-                                Convert the following wrestling technique analysis into a monologue script as if spoken by Cary Kolat.
+                                Convert the following wrestling technique analysis into a monologue script as if spoken by Coach David Steele.
                                 The tone MUST be direct, demanding, technically precise, and laser-focused on actionable improvement, just like Cary Kolat's signature coaching.
 
                                 Remove ALL headings, bullet points, timestamps, or ANY fluff.
@@ -415,9 +415,9 @@ Deliver this analysis with the uncompromising, technical authority of Cary Kolat
 else:
 
     st.write("""
-    Upload a wrestling video to receive Cary Kolat-style technique analysis. Let's get to work!
+    Upload a wrestling video to receive Coach Steele-style technique analysis. Let's get to work!
     """)
-    st.info("🤼 Upload a wrestling technique video above for expert AI analysis and personalized feedback, the Kolat way.")
+    st.info("🤼 Upload a wrestling technique video above for expert AI analysis and personalized feedback!")
 
     st.markdown('<div class="section-header">Tips for Best Analysis</div>', unsafe_allow_html=True)
     with st.expander("How to Get the Most from Your Wrestling Analysis"):
@@ -456,12 +456,6 @@ st.markdown("""
                 <p style="font-weight: bold; margin-bottom: 5px;">Sage Creek High School</p>
                 <p style="margin: 0;">3900 Bobcat Blvd. | Carlsbad, CA 92010</p>
                 <p style="margin: 0;">Phone: 760-331-6600 • office.schs@carlsbadusd.net</p>
-            </div>
-            <div>
-                <p style="margin: 0;">Privacy Policy</p>
-                <p style="margin: 0;">Site Map</p>
-                <p style="margin: 0;">Accessibility</p>
-                <p style="margin: 0;">Login</p>
             </div>
         </div>
         <hr style="border-color: #3D6A4D; margin: 10px 0;">
