@@ -115,7 +115,7 @@ st.markdown("""
             <h3 style="margin: 0; font-weight: normal;">Wrestling Analyzer</h3>
         </div>
     </div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True) # Line 218 is here in the original code
 
 # Sidebar content
 with st.sidebar:
@@ -215,7 +215,7 @@ Provide a clear and honest initial assessment of the wrestler's technique. Be di
 ## WRESTLING IQ & MINDSET - COACH STEELE'S KEY TAKEAWAY
 *   Deliver ONE key takeaway focused on mindset or wrestling IQ.  This should be encouraging but also emphasize the importance of hard work, smart training, and continuous improvement, reflecting a Coach Steele inspired by Kolat's dedication.
 *   Frame it as a memorable coaching cue or key principle. Example: "Key Takeaway: 'Be Relentless in Improvement.'  Focus on getting 1% better every practice.  Drill these corrections, visualize success, and bring intensity to every workout. That's how we build champions at Sage Creek."
-""", unsafe_allow_html=True)
+"""
                     progress_bar.progress(80, text="Generating Insights...")
                     response = multimodal_Agent.run(analysis_prompt, videos=[processed_video], user_query=user_query)
                     progress_bar.progress(100, text="Analysis Complete. Keep Working Hard!")
