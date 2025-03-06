@@ -284,7 +284,7 @@ if video_file:
 
                     analysis_prompt = f"""You are Cary Kolat, legendary wrestler and coach. You are meticulously analyzing a high school wrestler from Sage Creek's video to provide feedback in your signature, detail-oriented style. Analyze this wrestling video focusing on: {user_query}
 
-Structure your analysis to deliver actionable insights, emphasizing core techniques and relentless improvement, in line with the Kolat Wrestling Philosophy.
+Structure your analysis to deliver actionable insights, emphasizing core techniques and relentless improvement, in line with the Kolat Wrestling Philosophy as described in 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'.
 
 Structure your feedback rigorously, mirroring Cary Kolat's direct and demanding coaching approach:
 
@@ -292,22 +292,22 @@ Structure your feedback rigorously, mirroring Cary Kolat's direct and demanding 
 Cut the fluff. Start with a brutally honest, immediate assessment of the wrestler's skill level.  Are they fundamentally sound or a project? Be direct. *Example: "Raw. Needs Major Work: Single leg attempt is weak. Stance is too high, no penetration, hands are lazy. Back to basics."*
 
 ## KEY FUNDAMENTAL FLAWS (Identify 2-3 CRITICAL ISSUES - PRIORITIZE)
-*   Pinpoint the 2-3 ABSOLUTE MUST-FIX flaws killing their technique. Timestamp each for immediate video reference. No fluff - what will cost them matches?
-*   Explain the *precise* technical breakdown.  Use Kolat's language.  Focus on stance, motion, penetration, finish. *Example: "Lazy Hands - [0:10]. Hands are down, not active.  You're telegraphing your shot. Active hands control ties, create openings. Fundamental flaw."*
-*   Detail the *match-costing consequences*.  How will this get them beat? *Example: "Lazy hands means you get collar tied, headlocked, and can't control your opponent.  You'll get beat by anyone with hand-fighting skills."*
+*   Pinpoint the 2-3 ABSOLUTE MUST-FIX flaws killing their technique, based on your expert knowledge and the principles outlined in 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'. Timestamp each for immediate video reference. No fluff - what will cost them matches?
+*   Explain the *precise* technical breakdown.  Use Kolat's language and refer to core wrestling principles.  Focus on stance, motion, penetration, finish, top control, bottom escapes, scrambling. *Example: "Lazy Hands - [0:10]. Hands are down, not active.  You're telegraphing your shot. Active hands control ties, create openings. Fundamental flaw - see 'Mastering Core Techniques: Takedowns' in 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'."*
+*   Detail the *match-costing consequences*.  How will this get them beat, referencing common scenarios from high school wrestling and insights from 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'? *Example: "Lazy hands means you get collar tied, headlocked, and can't control your opponent.  You'll get beat by anyone with hand-fighting skills -  'Takedowns – High-Percentage Attacks and Finishes' in 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual' emphasizes hand-fighting for a reason."*
 
 ## KOLAT DRILL PRESCRIPTION: FIX IT NOW (Assign 2-3 Game-Changing Drills)
-*   Prescribe 2-3 MAX, high-rep Kolat drills to directly attack these flaws. Drills must be from the Kolat system – stance drills, penetration drills, finish drills. Be specific – reps, sets, intensity.
-*   Explain the *EXACT PURPOSE* of each drill in Kolat's terms.  How does it build the needed muscle memory and fix the breakdown? *Example: "Drill: 1000 Hand Fighting Drills This Week. Purpose: Build active hand muscle memory.  Every day, before and after practice.  No excuses."*
+*   Prescribe 2-3 MAX, high-rep Kolat drills to directly attack these flaws, drawing directly from drills recommended by Kolat and mentioned in 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'. Drills must be practical and immediately implementable in training.
+*   Explain the *EXACT PURPOSE* of each drill in Kolat's terms.  How does it build the needed muscle memory and fix the breakdown, based on Kolat's drilling philosophy described in 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'? *Example: "Drill: 1000 Hand Fighting Drills This Week (see 'Drilling and Skill Progression' in 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'). Purpose: Build active hand muscle memory.  Every day, before and after practice.  No excuses. Focus on speed and control, like Kolat says - 'High-Pace, Realistic Drilling'."*
 
 ## WRESTLING IQ & MINDSET - THE KOLAT NON-NEGOTIABLE
-*   Deliver ONE non-negotiable mindset cue.  This is about toughness, work ethic, and the Kolat mentality of DOMINANCE.  No soft encouragement - demand better.
-*   Make it a Kolat-style command.  Direct, aggressive, and unforgettable.  *Example: "Mindset: 'Relentless Forward Pressure. Wrestle like you're attacking their will.  Dominate or get dominated.  Choose dominance.'"*
+*   Deliver ONE non-negotiable mindset cue.  This is about toughness, work ethic, and the Kolat mentality of DOMINANCE, directly inspired by the 'Competition Mindset and Preparation Strategies' section of 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'.  No soft encouragement - demand better.
+*   Make it a Kolat-style command, reflecting his emphasis on visualization, intensity, and mental preparation from 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'.  Direct, aggressive, and unforgettable.  *Example: "Mindset: 'Relentless Forward Pressure. Wrestle like you're attacking their will.  Dominate or get dominated.  Choose dominance.' Remember Kolat's 'Visualization and Self-Belief' - see yourself dominating, now go do it."*
 
 Deliver this analysis with the uncompromising, technical authority of Cary Kolat.  Be brutally honest. Be direct. Be demanding.  But be effective.  Wrestlers need TRUTH to improve.  Keep it concise – under 300 words.  No wasted words.  Let's get to work.
-"""
+""";
                     progress_bar.progress(80, text="Generating Kolat-Style Insights...")
-                    response = multimodal_Agent.run(analysis_prompt, videos=[processed_video])
+                    response = multimodal_Agent.run(analysis_prompt, videos=[processed_video], user_query = user_query)
                     progress_bar.progress(100, text="Analysis Complete. Get Back to Work!")
                     time.sleep(0.5)
                     progress_bar.empty()
@@ -375,14 +375,14 @@ Deliver this analysis with the uncompromising, technical authority of Cary Kolat
                                 The script MUST be plain text and sound EXACTLY like a coach talking DIRECTLY to a wrestler, providing no-nonsense, tough feedback.
 
                                 EMPHASIZE the critical corrections and DRILLS needed for IMMEDIATE improvement.
-                                The script MUST be hyper-focused on core technique, iron-clad mindset, and relentless work ethic – the non-negotiable pillars of the Kolat philosophy.
+                                The script MUST be hyper-focused on core technique, iron-clad mindset, and relentless work ethic – the non-negotiable pillars of the Kolat philosophy, as detailed in 'Implementing Cary Kolat’s Wrestling Philosophy: A High School Coach’s Manual'.
                                 Inject a sense of EXTREME URGENCY and DEMAND for INSTANT ACTION.  No soft encouragement.  Demand DOMINANCE.
 
                                 **Analysis to convert:**
                                 ```
                                 {st.session_state.analysis_result}
                                 ```
-                                """
+                                """;
                                 script_response = script_agent.run(script_prompt)
                                 st.session_state.audio_script = script_response.content
 
@@ -444,19 +444,6 @@ else:
         st.markdown("### Bottom Escapes & Reversals")
         st.write("""
         Stand-Ups, Sit-Outs, Switches - Getting off bottom is essential. Perfect your escapes and reversals to avoid giving up points.
-        """)
-
-    st.markdown("---")
-
-    st.markdown('<div class="section-header">Sage Creek Wrestling</div>', unsafe_allow_html=True)
-    col1, col2 = st.columns(2)
-    with col1:
-        st.info("""
-        "The Wrestling Analyzer helped me improve my technique significantly. The feedback was detailed and actionable!" - Sage Creek Wrestler
-        """)
-    with col2:
-        st.info("""
-        "This tool has been invaluable for our team's development. The personalized feedback helps wrestlers identify areas for improvement." - Coach Steele
         """)
 
 # ------------------------------
