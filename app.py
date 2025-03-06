@@ -169,7 +169,7 @@ st.markdown("""
 # ------------------------------
 st.markdown("""
     <div class="main-header">
-        <img src="https://schs.carlsbadusd.net/assets/img/site-logo.png" width="70">
+        <img src="https://files.smartsites.parentsquare.com/3483/design_img__ljsgi1.png" width="70">
         <div>
             <h1 style="margin: 0;">Sage Creek High School</h1>
             <h3 style="margin: 0; font-weight: normal;">Wrestling Analyzer</h3>
@@ -215,7 +215,7 @@ st.markdown("""
 # Sidebar content - Sage Creek themed
 # ------------------------------
 with st.sidebar:
-    st.image("https://schs.carlsbadusd.net/assets/img/site-logo.png", width=80)
+    st.image("https://files.smartsites.parentsquare.com/3483/design_img__ljsgi1.png", width=80)
     st.header("About Wrestling Form Analysis", anchor=False)
     st.write("""
     Level up your wrestling with AI-powered technique analysis. Upload a video and get detailed feedback to refine your takedowns, top control, escapes, and scrambles.
