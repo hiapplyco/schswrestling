@@ -246,7 +246,6 @@ st.write("Upload a video of your wrestling technique for analysis.")
 video_file = st.file_uploader(
     "Upload Video",
     type=['mp4', 'mov', 'avi'],
-    help="Upload a video of your wrestling technique to receive detailed feedback."
 )
 
 if video_file:
