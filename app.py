@@ -154,9 +154,6 @@ st.write("Upload a video of your wrestling technique for analysis.")
 # Video upload button
 video_file = st.file_uploader("Upload Video", type=['mp4', 'mov', 'avi'])
 
-# Make the upload button more prominent
-st.markdown('<button class="video-upload-button">Upload Your Wrestling Video</button>', unsafe_allow_html=True)
-
 if video_file:
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_video:
         temp_video.write(video_file.read())
