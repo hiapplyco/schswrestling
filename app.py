@@ -60,7 +60,6 @@ st.markdown("""
     .analysis-section {
         padding: 20px;
         border-radius: 8px;
-        background-color: var(--sc-light-gray);
         margin-top: 20px;
     }
     /* Buttons */
