@@ -11,8 +11,8 @@ sqlalchemy
 pgvector
 psycopg[binary]
 pypdf
-streamlit
-google-generativeai
-elevenlabs
+streamlit>=1.28.0
+google-generativeai>=0.3.0
+elevenlabs>=0.2.24
 pathlib>=1.0.1
 python-dotenv>=1.0.0
