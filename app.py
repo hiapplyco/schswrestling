@@ -4,8 +4,7 @@ import time
 import os
 from pathlib import Path
 import base64
-from google import genai
-from google.genai import types
+import google.generativeai as genaifrom google.genai import types
 from elevenlabs.client import ElevenLabs
 
 # Set page configuration
