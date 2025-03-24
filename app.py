@@ -3,8 +3,7 @@ import tempfile
 import time
 import os
 from pathlib import Path
-import base64
-import google.generativeai as genai 
+import google.generativeai as genai
 from elevenlabs.client import ElevenLabs
 
 # Set page configuration
@@ -20,7 +19,7 @@ API_KEY_ELEVENLABS = st.secrets.get("elevenlabs", {}).get("api_key", None)
 
 # Configure Google Generative AI
 if API_KEY_GOOGLE:
-    os.environ["GEMINI_API_KEY"] = API_KEY_GOOGLE
+    os.environ["GOOGLE_API_KEY"] = API_KEY_GOOGLE
     genai.configure(api_key=API_KEY_GOOGLE)
 else:
     st.error("Google API Key not found. Please set the GOOGLE_API_KEY in Streamlit secrets.")
@@ -150,9 +149,9 @@ with st.sidebar:
     
     # Model selection
     model_options = {
-        "Quick Analysis": "gemini-2.0-flash",
-        "Standard Analysis": "gemini-2.0-pro",
-        "Detailed Analysis": "gemini-2.0-ultra",
+        "Quick Analysis": "gemini-1.5-flash",
+        "Standard Analysis": "gemini-1.5-pro",
+        "Detailed Analysis": "gemini-1.5-ultra",
     }
     selected_model = st.selectbox(
         "Analysis Model",
@@ -176,16 +175,13 @@ if 'processing_status' not in st.session_state:
     st.session_state.processing_status = ""
 
 # Function to generate analysis using Google Generative AI
-def generate_analysis(video_path, user_query, analysis_detail, selected_model):
-    # Create a Google Generative AI client
-    client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+def generate_analysis(video_path, user_query, additional_context, analysis_detail, selected_model):
+    # Create a model instance
+    model = genai.GenerativeModel(model_options[selected_model])
     
-    # Upload the video file
-    with open(video_path, "rb") as file:
-        uploaded_file = client.files.upload(file=file)
-    
-    # Get the model name from the selected option
-    model = model_options[selected_model]
+    # Upload the video
+    with open(video_path, "rb") as f:
+        video_data = f.read()
     
     # Generate detail level text based on the slider value
     detail_level_text = {
@@ -200,6 +196,8 @@ def generate_analysis(video_path, user_query, analysis_detail, selected_model):
     coach_steele_prompt = f"""You are Coach David Steele, the wrestling coach at Sage Creek High School. You are analyzing a video to provide feedback to a high school wrestler, drawing inspiration from the intense and detail-oriented coaching methods of legends like Cary Kolat. Analyze this wrestling video focusing on: {user_query}
 
 {detail_level_text[analysis_detail]}
+
+{f"Additional wrestler context: {additional_context}" if additional_context else ""}
 
 Structure your analysis to deliver actionable insights, emphasizing core techniques and relentless improvement, in line with wrestling principles inspired by the Kolat Wrestling Philosophy as described in 'Implementing Cary Kolat's Wrestling Philosophy: A High School Coach's Manual'.
 
@@ -232,51 +230,28 @@ Provide a clear and honest initial assessment of the wrestler's technique. Be di
 Make your analysis {"concise but informative" if analysis_detail <= 2 else "detailed and comprehensive"}. Focus on {"the most critical issues" if analysis_detail <= 3 else "both fundamental and nuanced aspects of the technique"}.
 """
     
-    # Create the content structure for the API call
-    contents = [
-        types.Content(
-            role="user",
-            parts=[
-                types.Part.from_uri(
-                    file_uri=uploaded_file.uri,
-                    mime_type=uploaded_file.mime_type,
-                ),
-            ],
-        ),
-        types.Content(
-            role="user",
-            parts=[
-                types.Part.from_text(text=coach_steele_prompt),
-            ],
-        ),
-    ]
-    
-    # Set the generation config
-    generate_content_config = types.GenerateContentConfig(
-        temperature=0.2,  # Lower temperature for more focused analysis
-        top_p=0.95,
-        top_k=40,
-        max_output_tokens=8192,  # Increased for more detailed responses
-        response_mime_type="text/plain",
+    # Generate the response
+    response = model.generate_content(
+        [
+            {"mime_type": "video/mp4", "data": video_data},
+            {"mime_type": "text/plain", "data": coach_steele_prompt}
+        ],
+        generation_config={
+            "temperature": 0.2,
+            "top_p": 0.95,
+            "top_k": 40,
+            "max_output_tokens": 8192,
+        },
+        stream=True
     )
     
-    # Stream the response and collect it
-    response_text = ""
-    for chunk in client.models.generate_content_stream(
-        model=model,
-        contents=contents,
-        config=generate_content_config,
-    ):
-        if chunk.text:
-            response_text += chunk.text
-            yield chunk.text  # Yield each chunk for streaming display
-    
-    return response_text
+    # Return the streaming response
+    return response
 
 # Function to generate audio script
 def generate_audio_script(analysis_text, voice_style="Balanced"):
-    # Create a Google Generative AI client
-    client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+    # Create a model instance for script generation
+    model = genai.GenerativeModel("gemini-1.5-flash")
     
     # Adjust script prompt based on voice style
     intensity_level = {
@@ -294,20 +269,15 @@ Analysis to convert:
 {analysis_text}
     """
     
-    # Set the generation config
-    generate_content_config = types.GenerateContentConfig(
-        temperature=0.7,  # Higher temperature for more natural speech
-        top_p=0.95,
-        top_k=40,
-        max_output_tokens=4096,
-        response_mime_type="text/plain",
-    )
-    
     # Generate the audio script
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=[{"role": "user", "parts": [{"text": script_prompt}]}],
-        generation_config=generate_content_config,
+    response = model.generate_content(
+        script_prompt,
+        generation_config={
+            "temperature": 0.7,
+            "top_p": 0.95,
+            "top_k": 40,
+            "max_output_tokens": 4096,
+        }
     )
     
     return response.text
@@ -341,9 +311,11 @@ if video_file:
         height=80
     )
     
-    # Additional context input for more detailed analysis
+    # Always create the additional context field but control its visibility with empty containers
+    # This avoids conditional widget creation which causes errors in Streamlit
+    additional_context_container = st.empty()
     if analysis_detail >= 3:
-        additional_context = st.text_area(
+        additional_context = additional_context_container.text_area(
             "Additional Context (Optional)",
             placeholder="e.g., 'I've been working on this for 2 weeks', 'This is for an upcoming tournament', 'I struggle with the finish'",
             height=60
@@ -376,15 +348,13 @@ if video_file:
                     # Analysis result placeholder for streaming
                     analysis_placeholder = st.empty()
                     
-                    # Create a full query combining the user query and additional context
-                    full_query = user_query
-                    if additional_context:
-                        full_query += f"\n\nAdditional context: {additional_context}"
-                    
                     # Stream the analysis results
+                    response = generate_analysis(video_path, user_query, additional_context, analysis_detail, selected_model)
+                    
                     result_text = ""
-                    for text_chunk in generate_analysis(video_path, full_query, analysis_detail, selected_model):
-                        result_text += text_chunk
+                    for chunk in response:
+                        chunk_text = chunk.text if hasattr(chunk, 'text') else ""
+                        result_text += chunk_text
                         analysis_placeholder.markdown(result_text)
                         
                         # Update progress as we receive chunks
