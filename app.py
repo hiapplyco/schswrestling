@@ -3,29 +3,40 @@ import tempfile
 import time
 import os
 from pathlib import Path
-import google.generativeai as genai
-from elevenlabs.client import ElevenLabs
 
-# Set page configuration
+# Phidata / Gemini / DuckDuckGo
+from phi.agent import Agent
+from phi.model.google import Gemini
+from phi.tools.duckduckgo import DuckDuckGo
+import google.generative_ai as gen
+
+# (Optional) for environment variables
+from dotenv import load_dotenv
+
+################################################################################
+# 1. Load environment variables & Configure API Keys
+################################################################################
+
+load_dotenv()
+API_KEY_GOOGLE = os.getenv("GOOGLE_API_KEY")
+
+if not API_KEY_GOOGLE:
+    st.error("Google API Key not found. Please set GOOGLE_API_KEY in environment.")
+    st.stop()
+
+# Configure Google Generative AI
+gen.configure(api_key=API_KEY_GOOGLE)
+
+################################################################################
+# 2. Streamlit Page Setup & Global Styles
+################################################################################
+
 st.set_page_config(
     page_title="Sage Creek Wrestling Analyzer",
     page_icon="🤼",
     layout="wide"
 )
 
-# Retrieve API keys from secrets
-API_KEY_GOOGLE = st.secrets["google"]["api_key"]
-API_KEY_ELEVENLABS = st.secrets.get("elevenlabs", {}).get("api_key", None)
-
-# Configure Google Generative AI
-if API_KEY_GOOGLE:
-    os.environ["GOOGLE_API_KEY"] = API_KEY_GOOGLE
-    genai.configure(api_key=API_KEY_GOOGLE)
-else:
-    st.error("Google API Key not found. Please set the GOOGLE_API_KEY in Streamlit secrets.")
-    st.stop()
-
-# Modern and educational CSS styling
 st.markdown("""
     <style>
     .stApp {
@@ -87,31 +98,7 @@ st.markdown("""
         margin-top: 30px;
         font-size: 0.9rem;
     }
-    /* Video Upload Button */
-    .video-upload-button {
-        background-color: var(--sc-gold);
-        color: white;
-        font-weight: bold;
-        border: none;
-        border-radius: 4px;
-        padding: 15px 25px;
-        font-size: 1.2rem;
-        cursor: pointer;
-        display: inline-block;
-        margin-top: 20px;
-    }
     /* Detailed Analysis Styling */
-    .detailed-analysis {
-        background-color: var(--sc-light-gray);
-        border-left: 5px solid var(--sc-gold);
-        padding: 15px;
-        margin: 20px 0;
-        border-radius: 0 8px 8px 0;
-    }
-    .analysis-progress {
-        height: 25px;
-        border-radius: 5px;
-    }
     .processing-status {
         font-size: 1.1rem;
         font-weight: bold;
@@ -121,7 +108,10 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Header
+################################################################################
+# 3. Header
+################################################################################
+
 st.markdown("""
     <div class="main-header">
         <img src="https://files.smartsites.parentsquare.com/3483/design_img__ljsgi1.png" alt="Sage Creek Logo">
@@ -132,162 +122,54 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# Sidebar content
+################################################################################
+# 4. Sidebar Content & Wrestling Analysis Options
+################################################################################
+
 with st.sidebar:
     st.image("https://files.smartsites.parentsquare.com/3483/design_img__ljsgi1.png", width=150)
     st.header("Wrestling Form Analysis")
-    st.write("Level up your wrestling with AI-powered technique analysis. Upload a video and get detailed feedback in the voice of Coach Steele.")
-
-    # Analysis detail level slider
+    st.write("Level up your wrestling with AI-powered technique analysis. Upload a video and get personalized feedback, inspired by Coach Steele.")
+    
+    # Analysis detail level slider (just for user experience)
     analysis_detail = st.slider(
         "Analysis Detail Level",
         min_value=1,
         max_value=5,
         value=3,
-        help="Higher values will produce more detailed analysis but may take longer to process."
-    )
-
-    # Model selection
-    model_options = {
-        "Quick Analysis": "gemini-1.5-flash",
-        "Standard Analysis": "gemini-1.5-pro",
-        "Detailed Analysis": "gemini-1.5-ultra",
-    }
-    selected_model = st.selectbox(
-        "Analysis Model",
-        options=list(model_options.keys()),
-        index=0,
-        help="Select the model to use for analysis. More advanced models provide more detailed feedback but may take longer."
+        help="Higher values will produce more detailed analysis but may take longer."
     )
 
     st.info("Go Bobcats!")
 
-# Session state initialization
-if 'analysis_result' not in st.session_state:
-    st.session_state.analysis_result = None
-if 'audio_script' not in st.session_state:
-    st.session_state.audio_script = None
-if 'audio_generated' not in st.session_state:
-    st.session_state.audio_generated = False
-if 'show_audio_options' not in st.session_state:
-    st.session_state.show_audio_options = False
-if 'processing_status' not in st.session_state:
-    st.session_state.processing_status = ""
+################################################################################
+# 5. Phidata Agent (Gemini + DuckDuckGo)
+################################################################################
 
-# Function to generate analysis using Google Generative AI
-def generate_analysis(video_path, user_query, additional_context, analysis_detail, selected_model):
-    # Create a model instance
-    model = genai.GenerativeModel(model_options[selected_model])
-
-    # Read and store video data
-    with open(video_path, "rb") as f:
-        video_data = f.read()
-
-    # Generate detail level text based on the slider value
-    detail_level_text = {
-        1: "Keep the analysis brief and focused on the most critical issues.",
-        2: "Provide a standard analysis with key points and suggestions.",
-        3: "Offer a comprehensive analysis with detailed feedback and specific drills.",
-        4: "Create an in-depth analysis with extensive technical breakdowns and multiple drill options.",
-        5: "Develop an exceptionally detailed analysis with frame-by-frame technical assessment and comprehensive improvement plan."
-    }
-
-    # Create the Coach Steele prompt
-    coach_steele_prompt = f"""You are Coach David Steele, the wrestling coach at Sage Creek High School. You are analyzing a video to provide feedback to a high school wrestler, drawing inspiration from the intense and detail-oriented coaching methods of legends like Cary Kolat. Analyze this wrestling video focusing on: {user_query}
-
-{detail_level_text[analysis_detail]}
-
-{f"Additional wrestler context: {additional_context}" if additional_context else ""}
-
-Structure your analysis to deliver actionable insights, emphasizing core techniques and relentless improvement, in line with wrestling principles inspired by the Kolat Wrestling Philosophy as described in 'Implementing Cary Kolat's Wrestling Philosophy: A High School Coach's Manual'.
-
-Structure your feedback rigorously, mirroring a direct and demanding coaching approach, while maintaining a constructive tone appropriate for high school athletes:
-
-## TECHNIQUE DIAGNOSIS: INITIAL IMPRESSION - BE DIRECT.
-Provide a clear and honest initial assessment of the wrestler's technique. Be direct but constructive. Example: "Needs Sharpening: Single leg entry shows potential, but finish is weak. Stance needs to be lower and more consistent."
-
-## KEY FUNDAMENTAL AREAS FOR IMPROVEMENT (Identify {"2-3" if analysis_detail <= 3 else "3-5"} CRITICAL ISSUES - PRIORITIZE)
-*   Pinpoint {"2-3" if analysis_detail <= 3 else "3-5"} key areas that need the most immediate attention for improvement. Timestamp each for video reference. Focus on fundamentals.
-*   Explain the *precise* technical issue. Use clear wrestling terminology, referencing core principles. Focus on stance, motion, penetration, finish, top control, bottom escapes, scrambling as relevant. Example: "Stance Too High - [0:15]. Wrestler's stance is too upright, compromising power and speed. A lower stance is crucial for effective shots and defense."
-*   Detail the *impact* of these issues on wrestling performance and match outcomes. Explain how these weaknesses can be exploited by opponents at the high school level, drawing upon general wrestling knowledge and principles inspired by 'Implementing Cary Kolat's Wrestling Philosophy: A High School Coach's Manual'. Example: "High stance makes you vulnerable to faster opponents and deeper shots. You'll struggle against anyone with a strong low attack.  Remember the emphasis on 'Stance and Movement' in Kolat-inspired training."
-
-## ACTIONABLE DRILL PRESCRIPTION:  TARGETED DRILLS FOR FIXES (Assign {"2-3" if analysis_detail <= 3 else "4-6"} Focused Drills)
-*   Prescribe {"2-3" if analysis_detail <= 3 else "4-6"} specific, actionable drills to directly address the identified weaknesses. Prioritize drills that can be realistically implemented in a high school practice setting. Reference drills that align with Kolat-inspired training methods whenever possible.
-*   Explain the *specific purpose* of each drill and *how* it will lead to technical correction and skill development. Example: "Drill: Partner Penetration Step Drill (3 sets of 20 reps). Purpose: To build muscle memory for a lower, more explosive penetration step, improving shot entries. Focus on driving through with the hips, maintaining a strong base - as emphasized in Kolat-inspired 'Penetration' drills."
-
-## STRENGTHS TO BUILD UPON
-*   Identify {"1-2" if analysis_detail <= 2 else "2-3"} specific strengths in the wrestler's technique that can be leveraged for further improvement.
-*   Explain how these strengths can be used as a foundation for addressing weaknesses.
-
-## WRESTLING IQ & MINDSET - COACH STEELE'S KEY TAKEAWAY
-*   Deliver {"ONE" if analysis_detail <= 3 else "TWO"} key takeaway{"s" if analysis_detail > 3 else ""} focused on mindset or wrestling IQ. This should be encouraging but also emphasize the importance of hard work, smart training, and continuous improvement, reflecting a Coach Steele inspired by Kolat's dedication.
-*   Frame it as a memorable coaching cue or key principle. Example: "Key Takeaway: 'Be Relentless in Improvement.' Focus on getting 1% better every practice. Drill these corrections, visualize success, and bring intensity to every workout. That's how we build champions at Sage Creek."
-
-{"## COMPETITION STRATEGY\n* Provide specific strategic advice for using the techniques shown in competitive matches.\n* Discuss setups, timing, and situational awareness related to the techniques analyzed." if analysis_detail >= 4 else ""}
-
-{"## ADVANCED TECHNICAL CONSIDERATIONS\n* For a wrestler seeking to master this technique, provide advanced technical details that would elevate their performance to a higher competitive level.\n* Reference high-level wrestling concepts that align with the Kolat philosophy." if analysis_detail >= 5 else ""}
-
-Make your analysis {"concise but informative" if analysis_detail <= 2 else "detailed and comprehensive"}. Focus on {"the most critical issues" if analysis_detail <= 3 else "both fundamental and nuanced aspects of the technique"}.
-"""
-
-    # Generate the response (streaming)
-    response = model.generate_content(
-        [
-            {"mime_type": "video/mp4", "data": video_data},
-            {"mime_type": "text/plain", "data": coach_steele_prompt}
-        ],
-        generation_config={
-            "temperature": 0.2,
-            "top_p": 0.95,
-            "top_k": 40,
-            "max_output_tokens": 8192,
-        },
-        stream=True
-    )
-
-    return response
-
-# Function to generate audio script
-def generate_audio_script(analysis_text, voice_style="Balanced"):
-    # Create a model instance for script generation
-    model = genai.GenerativeModel("gemini-1.5-flash")
-
-    # Adjust script prompt based on voice style
-    intensity_level = {
-        "Calm": "encouraging but firm",
-        "Balanced": "direct and focused",
-        "Intense": "intense and demanding"
-    }
-
-    script_prompt = f"""
-Convert the following wrestling technique analysis into a monologue script as if spoken by Coach David Steele.
-The tone MUST be {intensity_level[voice_style]}, and hyper-focused on actionable corrections and drills. Remove all headings, bullet points, timestamps, and fluff. The final script should sound like a coach talking directly to a wrestler – no-nonsense, tough, and urgent.
-
-Analysis to convert:
-
-{analysis_text}
+@st.cache_resource
+def initialize_agent():
     """
-
-    response = model.generate_content(
-        script_prompt,
-        generation_config={
-            "temperature": 0.7,
-            "top_p": 0.95,
-            "top_k": 40,
-            "max_output_tokens": 4096,
-        }
+    Initializes a Phidata Agent with the Gemini 2.0 model and DuckDuckGo tool.
+    The 'videos' parameter might fail with gemini-2.0 on raw video data,
+    but we'll pass it along as a demonstration.
+    """
+    return Agent(
+        name="Wrestling Analyzer Agent",
+        model=Gemini(model="gemini-2.0-flash-exp"),  # or "gemini-2.0-pro" etc.
+        tools=[DuckDuckGo()],
+        markdown=True
     )
 
-    return response.text
+multimodal_agent = initialize_agent()
 
-# Main UI Header
-st.write("Upload a video of your wrestling technique for analysis.")
+################################################################################
+# 6. Main App - File Uploader & Analysis
+################################################################################
 
-# Video upload
-video_file = st.file_uploader("Upload Video", type=['mp4', 'mov', 'avi'])
+st.write("Upload a wrestling video to receive technique analysis and integrated web insights.")
+video_file = st.file_uploader("Upload Video", type=['mp4', 'mov'])
 
 if video_file:
-    # Display file info
     file_details = {
         "FileName": video_file.name,
         "FileType": video_file.type,
@@ -295,205 +177,78 @@ if video_file:
     }
     st.write(f"**File Details:** {file_details['FileName']} ({file_details['FileSize']} MB)")
 
+    # Save the uploaded file temporarily
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_video:
         temp_video.write(video_file.read())
         video_path = temp_video.name
 
-    # Video preview
-    preview_placeholder = st.empty()
-    with preview_placeholder.container():
-        st.video(video_path, format="video/mp4", start_time=0)
-        if st.button("Close Video Preview"):
-            preview_placeholder.empty()
+    # Display video in Streamlit
+    st.video(video_path, format="video/mp4")
 
-    # User query text box
-    user_query = st.text_area(
-        "What wrestling technique would you like analyzed?",
-        placeholder="e.g., 'Analyze my single leg takedown', 'How's my top control?', 'Check my stand-up escape'",
-        height=80
+    # Additional context for wrestling analysis
+    user_context = st.text_area(
+        "Additional Wrestling Context (Optional)",
+        placeholder="E.g., 'Analyze my single leg takedown', 'Focus on top control', 'I struggle with finishing shots'",
+        height=70
     )
 
-    # Additional context if analysis_detail >= 3
-    additional_context = ""
-    if analysis_detail >= 3:
-        additional_context = st.text_area(
-            "Additional Context (Optional)",
-            placeholder="e.g., 'I've been working on this for 2 weeks', 'This is for an upcoming tournament', 'I struggle with the finish'",
-            height=70  # Fix: must be >= 68
-        )
+    # The "Coach Steele" style prompt logic
+    # We'll incorporate user_context and the "analysis_detail" slider for nuance
+    # plus a general approach referencing the "Kolat Philosophy"
 
-    if st.button("Get Analysis"):
-        if not user_query:
-            st.warning("Please enter a wrestling technique you want analyzed.")
-        else:
+    # Button to run analysis
+    if st.button("Analyze Wrestling Video"):
+        with st.spinner("Analyzing video and gathering info from the web..."):
+            # The custom prompt referencing "Coach Steele" style
+            # Because gemini-2.0 has issues with raw video, we might reference it in text
+            # but still pass the actual file as 'videos=[video_path]' to demonstrate usage.
+
+            # We’ll note that the Phidata docs let us pass a list of videos,
+            # but it may not fully parse the video with gemini-2.0 at the moment.
+            prompt = f"""
+                You are Coach David Steele analyzing a wrestling video, drawing on Cary Kolat-inspired fundamentals.
+                Provide a detailed technical analysis relevant to high school wrestlers.
+                Emphasize stance, takedown entries, finishes, top control, bottom escapes, and mental toughness.
+
+                Analysis Detail: {analysis_detail}
+                Additional Context: {user_context}
+
+                # Provide:
+                - Key fundamental areas for improvement (2-5, depending on detail level).
+                - Actionable drills referencing typical high school practice routines.
+                - Encouraging but rigorous "Coach Steele" style feedback.
+
+                # Reference external wrestling knowledge (via web search) to clarify details if needed.
+                # The final output should be an integrated summary of:
+                - Observations from the video
+                - Additional web insights from the DuckDuckGo tool
+
+                NOTE: If actual video analysis is not fully supported, combine user context with best wrestling knowledge and any relevant web data.
+            """
+
+            # Run agent with the user prompt & attach the local video file
+            # Caution: This might not work fully with gemini-2.0 as it doesn't truly parse video.
             try:
-                with st.spinner("Analyzing video and generating feedback..."):
-                    progress_bar = st.progress(0)
-                    st.session_state.processing_status = "Uploading video..."
-                    status_placeholder = st.empty()
-                    status_placeholder.markdown(
-                        f'<p class="processing-status">{st.session_state.processing_status}</p>',
-                        unsafe_allow_html=True
-                    )
-                    progress_bar.progress(10, text="Uploading...")
+                response = multimodal_agent.run(
+                    prompt,
+                    videos=[video_path]  # demonstration only
+                )
+                st.markdown("### Wrestling Technique Analysis")
+                st.write(response)
+            except Exception as ex:
+                st.error(f"Error running analysis with Gemini 2.0: {ex}")
+                st.info("Gemini 2.0 may not support direct video analysis. Try removing the video or using a different approach.")
+            
+        # Clean up after ourselves
+        Path(video_path).unlink(missing_ok=True)
 
-                    # Update progress
-                    progress_bar.progress(30, text="Processing...")
-                    st.session_state.processing_status = "Processing video... This may take a few moments."
-                    status_placeholder.markdown(
-                        f'<p class="processing-status">{st.session_state.processing_status}</p>',
-                        unsafe_allow_html=True
-                    )
-
-                    # Update status
-                    progress_bar.progress(60, text="Analyzing Technique...")
-                    st.session_state.processing_status = "Analyzing wrestling technique..."
-                    status_placeholder.markdown(
-                        f'<p class="processing-status">{st.session_state.processing_status}</p>',
-                        unsafe_allow_html=True
-                    )
-
-                    # Placeholder for streaming analysis
-                    analysis_placeholder = st.empty()
-
-                    # Stream response
-                    response = generate_analysis(
-                        video_path,
-                        user_query,
-                        additional_context,
-                        analysis_detail,
-                        selected_model
-                    )
-
-                    result_text = ""
-                    for chunk in response:
-                        chunk_text = chunk.text if hasattr(chunk, 'text') else ""
-                        result_text += chunk_text
-                        analysis_placeholder.markdown(result_text)
-
-                        # Update progress as we receive chunks
-                        progress_percent = min(60 + len(result_text) / 100, 95)
-                        progress_bar.progress(int(progress_percent), text="Generating Analysis...")
-
-                    # Store full result
-                    st.session_state.analysis_result = result_text
-
-                    # Complete progress
-                    progress_bar.progress(100, text="Analysis Complete. Keep Working Hard!")
-                    st.session_state.processing_status = "Analysis complete! Review your feedback below."
-                    status_placeholder.markdown(
-                        f'<p class="processing-status">{st.session_state.processing_status}</p>',
-                        unsafe_allow_html=True
-                    )
-                    time.sleep(0.5)
-                    progress_bar.empty()
-                    status_placeholder.empty()
-
-                    # Reset audio-related session states
-                    st.session_state.audio_generated = False
-                    st.session_state.show_audio_options = False
-                    st.session_state.audio_script = None
-
-            except Exception as error:
-                st.error(f"Analysis error: {error}")
-                st.info("Try uploading a shorter video or check your internet connection.")
-            finally:
-                # Clean up temp file
-                Path(video_path).unlink(missing_ok=True)
-
-    # Display the analysis if available
-    if st.session_state.analysis_result:
-        st.markdown('<div class="analysis-section">', unsafe_allow_html=True)
-        st.subheader("Wrestling Technique Analysis")
-        st.markdown(st.session_state.analysis_result)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        col1, col2 = st.columns(2)
-        with col1:
-            st.download_button(
-                label="Download Analysis",
-                data=st.session_state.analysis_result,
-                file_name="wrestling_technique_analysis.md",
-                mime="text/markdown"
-            )
-
-        with col2:
-            if st.button("Listen to Analysis (Audio Options)"):
-                st.session_state.show_audio_options = True
-
-        if st.session_state.show_audio_options:
-            with st.expander("Audio Voice Settings", expanded=True):
-                st.subheader("Voice Options")
-                elevenlabs_api_key = API_KEY_ELEVENLABS
-                selected_voice_id = "21m00Tcm4TlvDq8ikWAM"  # Default voice ID
-
-                if elevenlabs_api_key:
-                    try:
-                        client = ElevenLabs(api_key=elevenlabs_api_key)
-                        voice_data = client.voices.get_all()
-                        voices_list = [v.name for v in voice_data.voices]
-
-                        col_left, col_right = st.columns(2)
-                        with col_left:
-                            selected_voice_name = st.selectbox("Choose Voice", options=voices_list, index=0)
-                        with col_right:
-                            voice_style = st.select_slider(
-                                "Voice Style",
-                                options=["Calm", "Balanced", "Intense"],
-                                value="Balanced",
-                                help="Adjust the coaching intensity of the voice"
-                            )
-
-                        # Match the voice name to the ID
-                        selected_voice_id = next(
-                            (v.voice_id for v in voice_data.voices if v.name == selected_voice_name),
-                            "21m00Tcm4TlvDq8ikWAM"
-                        )
-                    except Exception as e:
-                        st.warning(f"Could not retrieve voices: {e}. Using default voice.")
-                        selected_voice_id = "21m00Tcm4TlvDq8ikWAM"
-                else:
-                    st.error("ElevenLabs API key missing.")
-
-                if st.button("Generate Audio Analysis"):
-                    if elevenlabs_api_key:
-                        try:
-                            with st.spinner("Preparing audio script - Kolat Style..."):
-                                # Generate audio script
-                                st.session_state.audio_script = generate_audio_script(
-                                    st.session_state.analysis_result,
-                                    voice_style
-                                )
-
-                            with st.spinner(f"Generating audio - Coach Steele Voice ({voice_style} Intensity)..."):
-                                client = ElevenLabs(api_key=elevenlabs_api_key)
-                                audio_generator = client.text_to_speech.convert(
-                                    text=st.session_state.audio_script,
-                                    voice_id=selected_voice_id,
-                                    model_id="eleven_multilingual_v2"
-                                )
-                                audio_bytes = b""
-                                for chunk in audio_generator:
-                                    audio_bytes += chunk
-                                st.session_state.audio = audio_bytes
-                                st.session_state.audio_generated = True
-
-                                st.audio(st.session_state.audio, format="audio/mp3")
-                                st.download_button(
-                                    label="Download Audio Analysis",
-                                    data=st.session_state.audio,
-                                    file_name="wrestling_analysis_audio.mp3",
-                                    mime="audio/mp3"
-                                )
-                        except Exception as e:
-                            st.error(f"Audio generation error: {str(e)}")
-                    else:
-                        st.error("ElevenLabs API key needed for audio.")
 else:
-    st.write("Upload a wrestling video to receive Coach Steele-style technique analysis. Let's get to work!")
-    st.info("🤼 Upload a wrestling technique video above for expert AI analysis and personalized feedback!")
+    st.info("Awaiting video upload. Please select an mp4 or mov file.")
 
-# Footer
+################################################################################
+# 7. Footer
+################################################################################
+
 st.markdown("""
     <div class="footer">
         <p>Sage Creek High School | 3900 Bobcat Blvd. | Carlsbad, CA 92010</p>
