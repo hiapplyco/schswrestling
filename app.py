@@ -179,7 +179,7 @@ def generate_analysis(video_path, user_query, additional_context, analysis_detai
     # Create a model instance
     model = genai.GenerativeModel(model_options[selected_model])
 
-    # Upload the video
+    # Read and store video data
     with open(video_path, "rb") as f:
         video_data = f.read()
 
@@ -204,7 +204,7 @@ Structure your analysis to deliver actionable insights, emphasizing core techniq
 Structure your feedback rigorously, mirroring a direct and demanding coaching approach, while maintaining a constructive tone appropriate for high school athletes:
 
 ## TECHNIQUE DIAGNOSIS: INITIAL IMPRESSION - BE DIRECT.
-Provide a clear and honest initial assessment of the wrestler's technique. Be direct but constructive.  Example: "Needs Sharpening: Single leg entry shows potential, but finish is weak. Stance needs to be lower and more consistent."
+Provide a clear and honest initial assessment of the wrestler's technique. Be direct but constructive. Example: "Needs Sharpening: Single leg entry shows potential, but finish is weak. Stance needs to be lower and more consistent."
 
 ## KEY FUNDAMENTAL AREAS FOR IMPROVEMENT (Identify {"2-3" if analysis_detail <= 3 else "3-5"} CRITICAL ISSUES - PRIORITIZE)
 *   Pinpoint {"2-3" if analysis_detail <= 3 else "3-5"} key areas that need the most immediate attention for improvement. Timestamp each for video reference. Focus on fundamentals.
@@ -212,16 +212,16 @@ Provide a clear and honest initial assessment of the wrestler's technique. Be di
 *   Detail the *impact* of these issues on wrestling performance and match outcomes. Explain how these weaknesses can be exploited by opponents at the high school level, drawing upon general wrestling knowledge and principles inspired by 'Implementing Cary Kolat's Wrestling Philosophy: A High School Coach's Manual'. Example: "High stance makes you vulnerable to faster opponents and deeper shots. You'll struggle against anyone with a strong low attack.  Remember the emphasis on 'Stance and Movement' in Kolat-inspired training."
 
 ## ACTIONABLE DRILL PRESCRIPTION:  TARGETED DRILLS FOR FIXES (Assign {"2-3" if analysis_detail <= 3 else "4-6"} Focused Drills)
-*   Prescribe {"2-3" if analysis_detail <= 3 else "4-6"} specific, actionable drills to directly address the identified weaknesses. Prioritize drills that can be realistically implemented in a high school practice setting.  Reference drills that align with Kolat-inspired training methods whenever possible.
-*   Explain the *specific purpose* of each drill and *how* it will lead to technical correction and skill development. Example: "Drill: Partner Penetration Step Drill (3 sets of 20 reps). Purpose: To build muscle memory for a lower, more explosive penetration step, improving shot entries. Focus on driving through with the hips, maintaining a strong base -  as emphasized in Kolat-inspired 'Penetration' drills."
+*   Prescribe {"2-3" if analysis_detail <= 3 else "4-6"} specific, actionable drills to directly address the identified weaknesses. Prioritize drills that can be realistically implemented in a high school practice setting. Reference drills that align with Kolat-inspired training methods whenever possible.
+*   Explain the *specific purpose* of each drill and *how* it will lead to technical correction and skill development. Example: "Drill: Partner Penetration Step Drill (3 sets of 20 reps). Purpose: To build muscle memory for a lower, more explosive penetration step, improving shot entries. Focus on driving through with the hips, maintaining a strong base - as emphasized in Kolat-inspired 'Penetration' drills."
 
 ## STRENGTHS TO BUILD UPON
 *   Identify {"1-2" if analysis_detail <= 2 else "2-3"} specific strengths in the wrestler's technique that can be leveraged for further improvement.
 *   Explain how these strengths can be used as a foundation for addressing weaknesses.
 
 ## WRESTLING IQ & MINDSET - COACH STEELE'S KEY TAKEAWAY
-*   Deliver {"ONE" if analysis_detail <= 3 else "TWO"} key takeaway{"s" if analysis_detail > 3 else ""} focused on mindset or wrestling IQ.  This should be encouraging but also emphasize the importance of hard work, smart training, and continuous improvement, reflecting a Coach Steele inspired by Kolat's dedication.
-*   Frame it as a memorable coaching cue or key principle. Example: "Key Takeaway: 'Be Relentless in Improvement.'  Focus on getting 1% better every practice.  Drill these corrections, visualize success, and bring intensity to every workout. That's how we build champions at Sage Creek."
+*   Deliver {"ONE" if analysis_detail <= 3 else "TWO"} key takeaway{"s" if analysis_detail > 3 else ""} focused on mindset or wrestling IQ. This should be encouraging but also emphasize the importance of hard work, smart training, and continuous improvement, reflecting a Coach Steele inspired by Kolat's dedication.
+*   Frame it as a memorable coaching cue or key principle. Example: "Key Takeaway: 'Be Relentless in Improvement.' Focus on getting 1% better every practice. Drill these corrections, visualize success, and bring intensity to every workout. That's how we build champions at Sage Creek."
 
 {"## COMPETITION STRATEGY\n* Provide specific strategic advice for using the techniques shown in competitive matches.\n* Discuss setups, timing, and situational awareness related to the techniques analyzed." if analysis_detail >= 4 else ""}
 
@@ -230,7 +230,7 @@ Provide a clear and honest initial assessment of the wrestler's technique. Be di
 Make your analysis {"concise but informative" if analysis_detail <= 2 else "detailed and comprehensive"}. Focus on {"the most critical issues" if analysis_detail <= 3 else "both fundamental and nuanced aspects of the technique"}.
 """
 
-    # Generate the response
+    # Generate the response (streaming)
     response = model.generate_content(
         [
             {"mime_type": "video/mp4", "data": video_data},
@@ -245,7 +245,6 @@ Make your analysis {"concise but informative" if analysis_detail <= 2 else "deta
         stream=True
     )
 
-    # Return the streaming response
     return response
 
 # Function to generate audio script
@@ -269,7 +268,6 @@ Analysis to convert:
 {analysis_text}
     """
 
-    # Generate the audio script
     response = model.generate_content(
         script_prompt,
         generation_config={
@@ -285,41 +283,44 @@ Analysis to convert:
 # Main UI Header
 st.write("Upload a video of your wrestling technique for analysis.")
 
-# Video upload button
+# Video upload
 video_file = st.file_uploader("Upload Video", type=['mp4', 'mov', 'avi'])
 
 if video_file:
-    # Display file info for longer videos
-    file_details = {"FileName": video_file.name, "FileType": video_file.type, "FileSize": f"{video_file.size / (1024 * 1024):.2f} MB"}
+    # Display file info
+    file_details = {
+        "FileName": video_file.name,
+        "FileType": video_file.type,
+        "FileSize": f"{video_file.size / (1024 * 1024):.2f} MB"
+    }
     st.write(f"**File Details:** {file_details['FileName']} ({file_details['FileSize']} MB)")
 
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_video:
         temp_video.write(video_file.read())
         video_path = temp_video.name
 
-    # Display video preview with an option to remove the preview
+    # Video preview
     preview_placeholder = st.empty()
     with preview_placeholder.container():
         st.video(video_path, format="video/mp4", start_time=0)
         if st.button("Close Video Preview"):
             preview_placeholder.empty()
 
-    # Analysis options
+    # User query text box
     user_query = st.text_area(
         "What wrestling technique would you like analyzed?",
         placeholder="e.g., 'Analyze my single leg takedown', 'How's my top control?', 'Check my stand-up escape'",
         height=80
     )
 
-    # Conditionally show additional context based on analysis detail
+    # Additional context if analysis_detail >= 3
+    additional_context = ""
     if analysis_detail >= 3:
         additional_context = st.text_area(
             "Additional Context (Optional)",
             placeholder="e.g., 'I've been working on this for 2 weeks', 'This is for an upcoming tournament', 'I struggle with the finish'",
             height=60
         )
-    else:
-        additional_context = ""
 
     if st.button("Get Analysis"):
         if not user_query:
@@ -330,24 +331,39 @@ if video_file:
                     progress_bar = st.progress(0)
                     st.session_state.processing_status = "Uploading video..."
                     status_placeholder = st.empty()
-                    status_placeholder.markdown(f'<p class="processing-status">{st.session_state.processing_status}</p>', unsafe_allow_html=True)
+                    status_placeholder.markdown(
+                        f'<p class="processing-status">{st.session_state.processing_status}</p>',
+                        unsafe_allow_html=True
+                    )
                     progress_bar.progress(10, text="Uploading...")
 
-                    # Update progress and status
+                    # Update progress
                     progress_bar.progress(30, text="Processing...")
-                    st.session_state.processing_status = "Processing video... This may take a few moments for longer videos."
-                    status_placeholder.markdown(f'<p class="processing-status">{st.session_state.processing_status}</p>', unsafe_allow_html=True)
+                    st.session_state.processing_status = "Processing video... This may take a few moments."
+                    status_placeholder.markdown(
+                        f'<p class="processing-status">{st.session_state.processing_status}</p>',
+                        unsafe_allow_html=True
+                    )
 
                     # Update status
                     progress_bar.progress(60, text="Analyzing Technique...")
                     st.session_state.processing_status = "Analyzing wrestling technique..."
-                    status_placeholder.markdown(f'<p class="processing-status">{st.session_state.processing_status}</p>', unsafe_allow_html=True)
+                    status_placeholder.markdown(
+                        f'<p class="processing-status">{st.session_state.processing_status}</p>',
+                        unsafe_allow_html=True
+                    )
 
-                    # Analysis result placeholder for streaming
+                    # Placeholder for streaming analysis
                     analysis_placeholder = st.empty()
 
-                    # Stream the analysis results
-                    response = generate_analysis(video_path, user_query, additional_context, analysis_detail, selected_model)
+                    # Stream response
+                    response = generate_analysis(
+                        video_path,
+                        user_query,
+                        additional_context,
+                        analysis_detail,
+                        selected_model
+                    )
 
                     result_text = ""
                     for chunk in response:
@@ -359,18 +375,21 @@ if video_file:
                         progress_percent = min(60 + len(result_text) / 100, 95)
                         progress_bar.progress(int(progress_percent), text="Generating Analysis...")
 
-                    # Store the full result
+                    # Store full result
                     st.session_state.analysis_result = result_text
 
-                    # Complete the progress
+                    # Complete progress
                     progress_bar.progress(100, text="Analysis Complete. Keep Working Hard!")
                     st.session_state.processing_status = "Analysis complete! Review your feedback below."
-                    status_placeholder.markdown(f'<p class="processing-status">{st.session_state.processing_status}</p>', unsafe_allow_html=True)
+                    status_placeholder.markdown(
+                        f'<p class="processing-status">{st.session_state.processing_status}</p>',
+                        unsafe_allow_html=True
+                    )
                     time.sleep(0.5)
                     progress_bar.empty()
                     status_placeholder.empty()
 
-                    # Reset the audio state
+                    # Reset audio-related session states
                     st.session_state.audio_generated = False
                     st.session_state.show_audio_options = False
                     st.session_state.audio_script = None
@@ -379,10 +398,10 @@ if video_file:
                 st.error(f"Analysis error: {error}")
                 st.info("Try uploading a shorter video or check your internet connection.")
             finally:
-                # Clean up the temporary file
+                # Clean up temp file
                 Path(video_path).unlink(missing_ok=True)
 
-    # Display analysis results if available
+    # Display the analysis if available
     if st.session_state.analysis_result:
         st.markdown('<div class="analysis-section">', unsafe_allow_html=True)
         st.subheader("Wrestling Technique Analysis")
@@ -408,18 +427,16 @@ if video_file:
                 elevenlabs_api_key = API_KEY_ELEVENLABS
                 selected_voice_id = "21m00Tcm4TlvDq8ikWAM"  # Default voice ID
 
-                # ElevenLabs voice options
                 if elevenlabs_api_key:
                     try:
                         client = ElevenLabs(api_key=elevenlabs_api_key)
                         voice_data = client.voices.get_all()
                         voices_list = [v.name for v in voice_data.voices]
 
-                        # Voice settings
-                        col1, col2 = st.columns(2)
-                        with col1:
+                        col_left, col_right = st.columns(2)
+                        with col_left:
                             selected_voice_name = st.selectbox("Choose Voice", options=voices_list, index=0)
-                        with col2:
+                        with col_right:
                             voice_style = st.select_slider(
                                 "Voice Style",
                                 options=["Calm", "Balanced", "Intense"],
@@ -427,10 +444,11 @@ if video_file:
                                 help="Adjust the coaching intensity of the voice"
                             )
 
-                        selected_voice_id = next((v.voice_id for v in voice_data.voices if v.name == selected_voice_name), None)
-                        if not selected_voice_id:
-                            st.warning("Voice selection issue. Using default voice.")
-                            selected_voice_id = "21m00Tcm4TlvDq8ikWAM"
+                        # Match the voice name to the ID
+                        selected_voice_id = next(
+                            (v.voice_id for v in voice_data.voices if v.name == selected_voice_name),
+                            "21m00Tcm4TlvDq8ikWAM"
+                        )
                     except Exception as e:
                         st.warning(f"Could not retrieve voices: {e}. Using default voice.")
                         selected_voice_id = "21m00Tcm4TlvDq8ikWAM"
@@ -441,7 +459,7 @@ if video_file:
                     if elevenlabs_api_key:
                         try:
                             with st.spinner("Preparing audio script - Kolat Style..."):
-                                # Generate the audio script
+                                # Generate audio script
                                 st.session_state.audio_script = generate_audio_script(
                                     st.session_state.analysis_result,
                                     voice_style
