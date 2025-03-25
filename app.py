@@ -137,16 +137,16 @@ with st.sidebar:
     st.image("https://files.smartsites.parentsquare.com/3483/design_img__ljsgi1.png", width=150)
     st.header("Wrestling Form Analysis")
     st.write("Level up your wrestling with AI-powered technique analysis. Upload a video and get detailed feedback in the voice of Coach Steele.")
-    
+
     # Analysis detail level slider
     analysis_detail = st.slider(
-        "Analysis Detail Level", 
-        min_value=1, 
-        max_value=5, 
-        value=3, 
+        "Analysis Detail Level",
+        min_value=1,
+        max_value=5,
+        value=3,
         help="Higher values will produce more detailed analysis but may take longer to process."
     )
-    
+
     # Model selection
     model_options = {
         "Quick Analysis": "gemini-1.5-flash",
@@ -159,7 +159,7 @@ with st.sidebar:
         index=0,
         help="Select the model to use for analysis. More advanced models provide more detailed feedback but may take longer."
     )
-    
+
     st.info("Go Bobcats!")
 
 # Session state initialization
@@ -178,11 +178,11 @@ if 'processing_status' not in st.session_state:
 def generate_analysis(video_path, user_query, additional_context, analysis_detail, selected_model):
     # Create a model instance
     model = genai.GenerativeModel(model_options[selected_model])
-    
+
     # Upload the video
     with open(video_path, "rb") as f:
         video_data = f.read()
-    
+
     # Generate detail level text based on the slider value
     detail_level_text = {
         1: "Keep the analysis brief and focused on the most critical issues.",
@@ -191,7 +191,7 @@ def generate_analysis(video_path, user_query, additional_context, analysis_detai
         4: "Create an in-depth analysis with extensive technical breakdowns and multiple drill options.",
         5: "Develop an exceptionally detailed analysis with frame-by-frame technical assessment and comprehensive improvement plan."
     }
-    
+
     # Create the Coach Steele prompt
     coach_steele_prompt = f"""You are Coach David Steele, the wrestling coach at Sage Creek High School. You are analyzing a video to provide feedback to a high school wrestler, drawing inspiration from the intense and detail-oriented coaching methods of legends like Cary Kolat. Analyze this wrestling video focusing on: {user_query}
 
@@ -229,7 +229,7 @@ Provide a clear and honest initial assessment of the wrestler's technique. Be di
 
 Make your analysis {"concise but informative" if analysis_detail <= 2 else "detailed and comprehensive"}. Focus on {"the most critical issues" if analysis_detail <= 3 else "both fundamental and nuanced aspects of the technique"}.
 """
-    
+
     # Generate the response
     response = model.generate_content(
         [
@@ -244,7 +244,7 @@ Make your analysis {"concise but informative" if analysis_detail <= 2 else "deta
         },
         stream=True
     )
-    
+
     # Return the streaming response
     return response
 
@@ -252,14 +252,14 @@ Make your analysis {"concise but informative" if analysis_detail <= 2 else "deta
 def generate_audio_script(analysis_text, voice_style="Balanced"):
     # Create a model instance for script generation
     model = genai.GenerativeModel("gemini-1.5-flash")
-    
+
     # Adjust script prompt based on voice style
     intensity_level = {
         "Calm": "encouraging but firm",
         "Balanced": "direct and focused",
         "Intense": "intense and demanding"
     }
-    
+
     script_prompt = f"""
 Convert the following wrestling technique analysis into a monologue script as if spoken by Coach David Steele.
 The tone MUST be {intensity_level[voice_style]}, and hyper-focused on actionable corrections and drills. Remove all headings, bullet points, timestamps, and fluff. The final script should sound like a coach talking directly to a wrestler – no-nonsense, tough, and urgent.
@@ -268,7 +268,7 @@ Analysis to convert:
 
 {analysis_text}
     """
-    
+
     # Generate the audio script
     response = model.generate_content(
         script_prompt,
@@ -279,7 +279,7 @@ Analysis to convert:
             "max_output_tokens": 4096,
         }
     )
-    
+
     return response.text
 
 # Main UI Header
@@ -292,7 +292,7 @@ if video_file:
     # Display file info for longer videos
     file_details = {"FileName": video_file.name, "FileType": video_file.type, "FileSize": f"{video_file.size / (1024 * 1024):.2f} MB"}
     st.write(f"**File Details:** {file_details['FileName']} ({file_details['FileSize']} MB)")
-    
+
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_video:
         temp_video.write(video_file.read())
         video_path = temp_video.name
@@ -310,19 +310,17 @@ if video_file:
         placeholder="e.g., 'Analyze my single leg takedown', 'How's my top control?', 'Check my stand-up escape'",
         height=80
     )
-    
-    # Always create the additional context field but control its visibility with empty containers
-    # This avoids conditional widget creation which causes errors in Streamlit
-    additional_context_container = st.empty()
+
+    # Conditionally show additional context based on analysis detail
     if analysis_detail >= 3:
-        additional_context = additional_context_container.text_area(
+        additional_context = st.text_area(
             "Additional Context (Optional)",
             placeholder="e.g., 'I've been working on this for 2 weeks', 'This is for an upcoming tournament', 'I struggle with the finish'",
             height=60
         )
     else:
         additional_context = ""
-    
+
     if st.button("Get Analysis"):
         if not user_query:
             st.warning("Please enter a wrestling technique you want analyzed.")
@@ -334,36 +332,36 @@ if video_file:
                     status_placeholder = st.empty()
                     status_placeholder.markdown(f'<p class="processing-status">{st.session_state.processing_status}</p>', unsafe_allow_html=True)
                     progress_bar.progress(10, text="Uploading...")
-                    
+
                     # Update progress and status
                     progress_bar.progress(30, text="Processing...")
                     st.session_state.processing_status = "Processing video... This may take a few moments for longer videos."
                     status_placeholder.markdown(f'<p class="processing-status">{st.session_state.processing_status}</p>', unsafe_allow_html=True)
-                    
+
                     # Update status
                     progress_bar.progress(60, text="Analyzing Technique...")
                     st.session_state.processing_status = "Analyzing wrestling technique..."
                     status_placeholder.markdown(f'<p class="processing-status">{st.session_state.processing_status}</p>', unsafe_allow_html=True)
-                    
+
                     # Analysis result placeholder for streaming
                     analysis_placeholder = st.empty()
-                    
+
                     # Stream the analysis results
                     response = generate_analysis(video_path, user_query, additional_context, analysis_detail, selected_model)
-                    
+
                     result_text = ""
                     for chunk in response:
                         chunk_text = chunk.text if hasattr(chunk, 'text') else ""
                         result_text += chunk_text
                         analysis_placeholder.markdown(result_text)
-                        
+
                         # Update progress as we receive chunks
                         progress_percent = min(60 + len(result_text) / 100, 95)
                         progress_bar.progress(int(progress_percent), text="Generating Analysis...")
-                    
+
                     # Store the full result
                     st.session_state.analysis_result = result_text
-                    
+
                     # Complete the progress
                     progress_bar.progress(100, text="Analysis Complete. Keep Working Hard!")
                     st.session_state.processing_status = "Analysis complete! Review your feedback below."
@@ -371,7 +369,7 @@ if video_file:
                     time.sleep(0.5)
                     progress_bar.empty()
                     status_placeholder.empty()
-                    
+
                     # Reset the audio state
                     st.session_state.audio_generated = False
                     st.session_state.show_audio_options = False
@@ -399,7 +397,7 @@ if video_file:
                 file_name="wrestling_technique_analysis.md",
                 mime="text/markdown"
             )
-        
+
         with col2:
             if st.button("Listen to Analysis (Audio Options)"):
                 st.session_state.show_audio_options = True
@@ -409,14 +407,14 @@ if video_file:
                 st.subheader("Voice Options")
                 elevenlabs_api_key = API_KEY_ELEVENLABS
                 selected_voice_id = "21m00Tcm4TlvDq8ikWAM"  # Default voice ID
-                
+
                 # ElevenLabs voice options
                 if elevenlabs_api_key:
                     try:
                         client = ElevenLabs(api_key=elevenlabs_api_key)
                         voice_data = client.voices.get_all()
                         voices_list = [v.name for v in voice_data.voices]
-                        
+
                         # Voice settings
                         col1, col2 = st.columns(2)
                         with col1:
@@ -428,7 +426,7 @@ if video_file:
                                 value="Balanced",
                                 help="Adjust the coaching intensity of the voice"
                             )
-                        
+
                         selected_voice_id = next((v.voice_id for v in voice_data.voices if v.name == selected_voice_name), None)
                         if not selected_voice_id:
                             st.warning("Voice selection issue. Using default voice.")
@@ -445,7 +443,7 @@ if video_file:
                             with st.spinner("Preparing audio script - Kolat Style..."):
                                 # Generate the audio script
                                 st.session_state.audio_script = generate_audio_script(
-                                    st.session_state.analysis_result, 
+                                    st.session_state.analysis_result,
                                     voice_style
                                 )
 
