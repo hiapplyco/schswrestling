@@ -319,7 +319,7 @@ if video_file:
         additional_context = st.text_area(
             "Additional Context (Optional)",
             placeholder="e.g., 'I've been working on this for 2 weeks', 'This is for an upcoming tournament', 'I struggle with the finish'",
-            height=60
+            height=70  # Fix: must be >= 68
         )
 
     if st.button("Get Analysis"):
