@@ -8,7 +8,6 @@ from pathlib import Path
 from phi.agent import Agent
 from phi.model.google import Gemini
 from phi.tools.duckduckgo import DuckDuckGo
-import google.generative_ai as gen
 
 # (Optional) for environment variables
 from dotenv import load_dotenv
